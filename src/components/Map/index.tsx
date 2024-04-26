@@ -63,11 +63,15 @@ export const Map = ({
 
     async function initMap() {
         // Request needed libraries.
-        const { Map } = (await google.maps.importLibrary(
+        const {Map} = (await google.maps.importLibrary(
             "maps",
         )) as google.maps.MapsLibrary;
 
-        const position = { lat: 40.735657, lng: -74.172363 };
+        const { Autocomplete } = (await google.maps.importLibrary(
+            "places",
+        )) as google.maps.places;
+
+        const position = {lat: 40.735657, lng: -74.172363};
         map = new Map(document.getElementById("map") as HTMLElement, {
             zoom: 16,
             center: position,
@@ -85,6 +89,18 @@ export const Map = ({
 
         datasetLayer.addListener("click", handleClick);
         datasetLayer.addListener("mousemove", handleMouseMove);
+
+        const inputField = document.getElementById("pac-input"); // Replace with your input element ID
+        const autocomplete = new Autocomplete(inputField);
+
+        autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+            if (place) {
+                // Update map center based on selected address
+                map.setCenter(place.geometry.location);
+                map.setZoom(16);
+            }
+        });
 
         // Map event listener.
         map.addListener("mousemove", () => {
@@ -145,5 +161,8 @@ export const Map = ({
 
     void initMap();
 
-    return <div id="map" className={styles.map}></div>;
+    return <>
+        <input id="pac-input" type="text" placeholder="Enter a location"/>
+        <div id="map" className={styles.map}></div>
+    </>
 };
