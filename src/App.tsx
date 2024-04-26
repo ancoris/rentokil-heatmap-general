@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import "./App.css";
 import { Map } from "./components/Map";
+import PrimaryNavigation from "./PrimaryNavigation.tsx";
 
 function App() {
     const [featureArea, setFeatureArea] = useState<number>(0);
@@ -23,6 +24,7 @@ function App() {
 
     return (
         <>
+            <PrimaryNavigation/>
             <div>Feature Area: {displayArea} square foot.</div>
             {MemoizedMap}
         </>
