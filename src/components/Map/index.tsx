@@ -2,13 +2,17 @@ import styles from "./Map.module.css";
 
 export const Map = ({
     setFeatureArea,
+    setLastClickedFeatureIds,
+    setMap,
 }: {
     setFeatureArea: React.Dispatch<React.SetStateAction<number>>;
+    setLastClickedFeatureIds: React.Dispatch<React.SetStateAction<string[]>>;
+    setMap: React.Dispatch<React.SetStateAction<google.maps.Map | null>>;
 }) => {
     let map: google.maps.Map;
-    let lastInteractedFeatureIds = [];
-    let lastClickedFeatureIds = [];
-    let datasetLayer;
+    let lastInteractedFeatureIds: string[] = [];
+    let lastClickedFeatureIds: string[] = [];
+    let datasetLayer: any;
 
     // Note, 'globalid' is an attribute in this Dataset.
     function handleClick(/* MouseEvent */ e) {
@@ -16,11 +20,20 @@ export const Map = ({
         if (e.features) {
             lastClickedFeatureIds = e.features.map((f) => {
                 console.log(f);
+                console.log(map);
+                map.data.forEach((d) => {
+                    console.log("forEach");
+                    console.log(d);
+                });
+                map.data.toGeoJson((o) => {
+                    console.log("toGeoJson", o);
+                });
                 featureAreaSqFoot += f.datasetAttributes["acres"] * 43560;
                 return f.datasetAttributes["globalid"];
             });
         }
         setFeatureArea(featureAreaSqFoot);
+        setLastClickedFeatureIds(lastClickedFeatureIds);
 
         //@ts-ignore
         datasetLayer.style = applyStyle;
@@ -49,6 +62,7 @@ export const Map = ({
             mapId: "b98e588c46685dd7",
             mapTypeControl: false,
         });
+        setMap(map);
 
         // Dataset ID for NYC park data.
         const datasetId = "6fe13aa9-b900-45e7-b636-3236672c3f4f";
@@ -71,9 +85,7 @@ export const Map = ({
             }
         });
         const attributionDiv = document.createElement("div");
-        const attributionControl = createAttribution(map);
-
-        attributionDiv.appendChild(attributionControl);
+        attributionDiv.appendChild(createAttribution(map));
         map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(
             attributionDiv,
         );
