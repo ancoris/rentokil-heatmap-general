@@ -6,3 +6,15 @@
     padding: 2rem;
     text-align: center;
 }
+
+/* 
+ * Always set the map height explicitly to define the size of the div element
+ * that contains the map. 
+ */
+#map {
+    height: 100%;
+}
+
+div.wrapper{
+    height: 100%;
+}

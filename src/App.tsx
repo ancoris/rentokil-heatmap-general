@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import "./App.css";
 import { ID_ATTRIBUTE_NAME, Map } from "./components/Map";
 import geoJson from "./assets/export.geojson" assert { type: "json" };
+import PrimaryNavigation from "./PrimaryNavigation.tsx";
 
 function App() {
     const [lastClickedFeatureIds, setLastClickedFeatureIds] = useState<
@@ -63,6 +64,7 @@ function App() {
 
     return (
         <>
+            <PrimaryNavigation />
             <div>
                 {lastClickedFeatureIds?.length > 0
                     ? `Feature Area: ${displayArea} square foot.`

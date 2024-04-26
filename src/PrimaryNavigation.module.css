@@ -1,0 +1,43 @@
+div.topNavBar {
+    width: 100%;
+    height: 40px;
+    margin: auto;
+    display: flex;
+    background: #0f202e;
+    flex-direction: column;
+}
+
+div.bottomNavBar {
+    width: 100%;
+    height: 68px;
+    margin: auto;
+    display: flex;
+    background: #354a55;
+    flex-direction: column;
+}
+
+div.outer{
+    width: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+div.logoContainer{
+    pointer-events: auto;
+    top: 32px;
+    margin-left: 40px;
+    width: 25%;
+    height: 108px;
+    z-index: 3;
+    position: absolute;
+    background: #ED1C24;}
+
+
+div.logoTitleContainer{
+    pointer-events: auto;
+    top: 40.5px;
+    height: 46px;
+    position: relative;
+    text-align: center;
+}
