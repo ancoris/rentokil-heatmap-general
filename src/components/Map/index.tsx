@@ -1,6 +1,6 @@
 import styles from "./Map.module.css";
 
-export const ID_ATTRIBUTE_NAME = "@id"; // "globalid";
+export const ID_ATTRIBUTE_NAME = "@id";
 
 const STYLE_DEFAULT = {
     strokeColor: "green",
@@ -23,41 +23,37 @@ const STYLE_MOUSE_MOVE = {
 };
 
 export const Map = ({
-    setFeatureArea,
     setLastClickedFeatureIds,
-    setMap,
 }: {
-    setFeatureArea: React.Dispatch<React.SetStateAction<number>>;
     setLastClickedFeatureIds: React.Dispatch<React.SetStateAction<string[]>>;
-    setMap: React.Dispatch<React.SetStateAction<google.maps.Map | null>>;
 }) => {
     let map: google.maps.Map;
     let lastInteractedFeatureIds: string[] = [];
     let lastClickedFeatureIds: string[] = [];
-    let datasetLayer: any;
+    let datasetLayer: google.maps.FeatureLayer;
 
-    function handleClick(/* MouseEvent */ e) {
-        let featureAreaSqFoot = 0;
+    function handleClick(e: google.maps.FeatureMouseEvent) {
         if (e.features) {
             lastClickedFeatureIds = e.features.map((f) => {
-                featureAreaSqFoot += f.datasetAttributes["acres"] * 43560;
-                return f.datasetAttributes[ID_ATTRIBUTE_NAME];
+                return (f as google.maps.DatasetFeature).datasetAttributes[
+                    ID_ATTRIBUTE_NAME
+                ];
             });
         }
-        setFeatureArea(featureAreaSqFoot);
         setLastClickedFeatureIds(lastClickedFeatureIds);
 
-        //@ts-ignore
         datasetLayer.style = applyStyle;
     }
 
-    function handleMouseMove(/* MouseEvent */ e) {
+    function handleMouseMove(e: google.maps.FeatureMouseEvent) {
         if (e.features) {
             lastInteractedFeatureIds = e.features.map(
-                (f) => f.datasetAttributes[ID_ATTRIBUTE_NAME],
+                (f) =>
+                    (f as google.maps.DatasetFeature).datasetAttributes[
+                        ID_ATTRIBUTE_NAME
+                    ],
             );
         }
-        //@ts-ignore
         datasetLayer.style = applyStyle;
     }
 
@@ -67,19 +63,22 @@ export const Map = ({
             "maps",
         )) as google.maps.MapsLibrary;
 
-        const position = { lat: 40.735657, lng: -74.172363 };
-        map = new Map(document.getElementById("map") as HTMLElement, {
-            zoom: 16,
-            center: position,
-            mapId: "81d6db83c3b8a7fc",
-            mapTypeControl: false,
-        });
-        setMap(map);
+        const position = { lat: 40.735657, lng: -74.172363 }; // Newark, NJ
+        map = new Map(
+            document.getElementById("map") as HTMLElement,
+            {
+                zoom: 16,
+                maxZoom: 16, // any further in and the buildings block the overlay
+                center: position,
+                mapId: "81d6db83c3b8a7fc",
+                mapTypeControl: true,
+                streetViewControl: false,
+            } as google.maps.MapOptions,
+        );
 
         // Dataset ID for Newark found by jazim, shown here .
         const datasetId = "2b8bdf5a-5fbf-4706-96f3-4bdee1077c72";
 
-        //@ts-ignore
         datasetLayer = map.getDatasetFeatureLayer(datasetId);
         datasetLayer.style = applyStyle;
 
@@ -96,16 +95,15 @@ export const Map = ({
                 datasetLayer.style = applyStyle;
             }
         });
-        createAttribution(map, "Data source: NYC Open Data");
+        // createAttribution(map, "Data source: NYC Open Data"); // not for this current dataset
         createAttribution(
             map,
             "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
         );
     }
 
-    function applyStyle(/* FeatureStyleFunctionOptions */ params) {
-        const datasetFeature = params.feature;
-        //@ts-ignore
+    function applyStyle(params: google.maps.FeatureStyleFunctionOptions) {
+        const datasetFeature = params.feature as google.maps.DatasetFeature;
         if (
             lastClickedFeatureIds.includes(
                 datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME],
@@ -113,7 +111,6 @@ export const Map = ({
         ) {
             return STYLE_CLICKED;
         }
-        //@ts-ignore
         if (
             lastInteractedFeatureIds.includes(
                 datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME],
@@ -130,6 +127,7 @@ export const Map = ({
 
         // Define CSS styles.
         attributionLabel.style.backgroundColor = "#fff";
+        attributionLabel.style.color = "#000";
         attributionLabel.style.opacity = "0.7";
         attributionLabel.style.fontFamily = "Roboto,Arial,sans-serif";
         attributionLabel.style.fontSize = "10px";
