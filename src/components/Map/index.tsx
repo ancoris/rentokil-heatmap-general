@@ -1,6 +1,10 @@
 import styles from "./Map.module.css";
 
-export const Map = () => {
+export const Map = ({
+    setFeatureArea,
+}: {
+    setFeatureArea: React.Dispatch<React.SetStateAction<number>>;
+}) => {
     let map: google.maps.Map;
     let lastInteractedFeatureIds = [];
     let lastClickedFeatureIds = [];
@@ -8,11 +12,16 @@ export const Map = () => {
 
     // Note, 'globalid' is an attribute in this Dataset.
     function handleClick(/* MouseEvent */ e) {
+        let featureAreaSqFoot = 0;
         if (e.features) {
-            lastClickedFeatureIds = e.features.map(
-                (f) => f.datasetAttributes["globalid"],
-            );
+            lastClickedFeatureIds = e.features.map((f) => {
+                console.log(f);
+                featureAreaSqFoot += f.datasetAttributes["acres"] * 43560;
+                return f.datasetAttributes["globalid"];
+            });
         }
+        setFeatureArea(featureAreaSqFoot);
+
         //@ts-ignore
         datasetLayer.style = applyStyle;
     }
