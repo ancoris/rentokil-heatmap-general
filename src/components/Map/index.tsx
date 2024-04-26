@@ -1,5 +1,27 @@
 import styles from "./Map.module.css";
 
+export const ID_ATTRIBUTE_NAME = "@id"; // "globalid";
+
+const STYLE_DEFAULT = {
+    strokeColor: "green",
+    strokeWeight: 2.0,
+    strokeOpacity: 1.0,
+    fillColor: "green",
+    fillOpacity: 0.3,
+};
+
+const STYLE_CLICKED = {
+    ...STYLE_DEFAULT,
+    strokeColor: "blue",
+    fillColor: "blue",
+    fillOpacity: 0.5,
+};
+
+const STYLE_MOUSE_MOVE = {
+    ...STYLE_DEFAULT,
+    strokeWeight: 4.0,
+};
+
 export const Map = ({
     setFeatureArea,
     setLastClickedFeatureIds,
@@ -14,22 +36,12 @@ export const Map = ({
     let lastClickedFeatureIds: string[] = [];
     let datasetLayer: any;
 
-    // Note, 'globalid' is an attribute in this Dataset.
     function handleClick(/* MouseEvent */ e) {
         let featureAreaSqFoot = 0;
         if (e.features) {
             lastClickedFeatureIds = e.features.map((f) => {
-                console.log(f);
-                console.log(map);
-                map.data.forEach((d) => {
-                    console.log("forEach");
-                    console.log(d);
-                });
-                map.data.toGeoJson((o) => {
-                    console.log("toGeoJson", o);
-                });
                 featureAreaSqFoot += f.datasetAttributes["acres"] * 43560;
-                return f.datasetAttributes["globalid"];
+                return f.datasetAttributes[ID_ATTRIBUTE_NAME];
             });
         }
         setFeatureArea(featureAreaSqFoot);
@@ -42,7 +54,7 @@ export const Map = ({
     function handleMouseMove(/* MouseEvent */ e) {
         if (e.features) {
             lastInteractedFeatureIds = e.features.map(
-                (f) => f.datasetAttributes["globalid"],
+                (f) => f.datasetAttributes[ID_ATTRIBUTE_NAME],
             );
         }
         //@ts-ignore
@@ -55,9 +67,9 @@ export const Map = ({
             "maps",
         )) as google.maps.MapsLibrary;
 
-        const position = { lat: 40.780101, lng: -73.96778 };
+        const position = { lat: 40.735657, lng: -74.172363 };
         map = new Map(document.getElementById("map") as HTMLElement, {
-            zoom: 13,
+            zoom: 16,
             center: position,
             mapId: "81d6db83c3b8a7fc",
             mapTypeControl: false,
@@ -84,56 +96,36 @@ export const Map = ({
                 datasetLayer.style = applyStyle;
             }
         });
-        const attributionDiv = document.createElement("div");
-        attributionDiv.appendChild(createAttribution(map));
-        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(
-            attributionDiv,
+        createAttribution(map, "Data source: NYC Open Data");
+        createAttribution(
+            map,
+            "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
         );
     }
 
-    const styleDefault = {
-        strokeColor: "green",
-        strokeWeight: 2.0,
-        strokeOpacity: 1.0,
-        fillColor: "green",
-        fillOpacity: 0.3,
-    };
-
-    const styleClicked = {
-        ...styleDefault,
-        strokeColor: "blue",
-        fillColor: "blue",
-        fillOpacity: 0.5,
-    };
-
-    const styleMouseMove = {
-        ...styleDefault,
-        strokeWeight: 4.0,
-    };
-
     function applyStyle(/* FeatureStyleFunctionOptions */ params) {
         const datasetFeature = params.feature;
-        // Note, 'globalid' is an attribute in this dataset.
         //@ts-ignore
         if (
             lastClickedFeatureIds.includes(
-                datasetFeature.datasetAttributes["globalid"],
+                datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME],
             )
         ) {
-            return styleClicked;
+            return STYLE_CLICKED;
         }
         //@ts-ignore
         if (
             lastInteractedFeatureIds.includes(
-                datasetFeature.datasetAttributes["globalid"],
+                datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME],
             )
         ) {
-            return styleMouseMove;
+            return STYLE_MOUSE_MOVE;
         }
-        return styleDefault;
+        return STYLE_DEFAULT;
     }
 
-    function createAttribution(map) {
+    function createAttribution(map: google.maps.Map, label: string) {
+        const attributionDiv = document.createElement("div");
         const attributionLabel = document.createElement("div");
 
         // Define CSS styles.
@@ -143,8 +135,12 @@ export const Map = ({
         attributionLabel.style.fontSize = "10px";
         attributionLabel.style.padding = "2px";
         attributionLabel.style.margin = "2px";
-        attributionLabel.textContent = "Data source: NYC Open Data";
-        return attributionLabel;
+        attributionLabel.textContent = label;
+        attributionDiv.appendChild(attributionLabel);
+
+        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(
+            attributionDiv,
+        );
     }
 
     void initMap();

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import "./App.css";
-import { Map } from "./components/Map";
+import { ID_ATTRIBUTE_NAME, Map } from "./components/Map";
+import geoJson from "./assets/export.geojson" assert { type: "json" };
 
 function App() {
     const [lastClickedFeatureIds, setLastClickedFeatureIds] = useState<
@@ -29,6 +30,36 @@ function App() {
             }).format(featureArea),
         );
     }, [featureArea]);
+
+    const getArea = (coordinates: number[][][]): number => {
+        return 99;
+    };
+
+    useEffect(() => {
+        if (geoJson) {
+            setFeatureArea(
+                lastClickedFeatureIds
+                    .map((clickedId) => {
+                        const foundFeature = geoJson.features.find(
+                            (feature) =>
+                                feature.properties[ID_ATTRIBUTE_NAME] ===
+                                clickedId,
+                        );
+                        if (
+                            foundFeature &&
+                            foundFeature.geometry.type === "Polygon"
+                        ) {
+                            // Multi-polygon is not supported in this example.
+                            return getArea(foundFeature.geometry.coordinates);
+                        }
+                        return 0;
+                    })
+                    .reduce((acc, curr) => {
+                        return acc + curr;
+                    }, 0),
+            );
+        }
+    }, [geoJson, lastClickedFeatureIds]);
 
     return (
         <>
