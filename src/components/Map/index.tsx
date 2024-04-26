@@ -59,13 +59,13 @@ export const Map = ({
         map = new Map(document.getElementById("map") as HTMLElement, {
             zoom: 13,
             center: position,
-            mapId: "b98e588c46685dd7",
+            mapId: "81d6db83c3b8a7fc",
             mapTypeControl: false,
         });
         setMap(map);
 
-        // Dataset ID for NYC park data.
-        const datasetId = "6fe13aa9-b900-45e7-b636-3236672c3f4f";
+        // Dataset ID for Newark found by jazim, shown here .
+        const datasetId = "2b8bdf5a-5fbf-4706-96f3-4bdee1077c72";
 
         //@ts-ignore
         datasetLayer = map.getDatasetFeatureLayer(datasetId);
