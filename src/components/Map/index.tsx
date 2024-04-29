@@ -12,14 +12,15 @@ const STYLE_DEFAULT = {
 
 const STYLE_CLICKED = {
     ...STYLE_DEFAULT,
-    strokeColor: "blue",
-    fillColor: "blue",
+    strokeColor: "#ed1c24",
+    fillColor: "#ed1c24",
     fillOpacity: 0.5,
 };
 
 const STYLE_MOUSE_MOVE = {
     ...STYLE_DEFAULT,
     strokeWeight: 4.0,
+    strokeColor: "#ed1c24",
 };
 
 export const Map = ({
@@ -34,6 +35,7 @@ export const Map = ({
 
     function handleClick(e: google.maps.FeatureMouseEvent) {
         if (e.features) {
+            e.stop();
             lastClickedFeatureIds = e.features.map((f) => {
                 return (f as google.maps.DatasetFeature).datasetAttributes[
                     ID_ATTRIBUTE_NAME
@@ -71,16 +73,16 @@ export const Map = ({
             document.getElementById("map") as HTMLElement,
             {
                 zoom: 16,
-                maxZoom: 16, // any further in and the buildings block the overlay
                 center: position,
-                mapId: "81d6db83c3b8a7fc",
+                mapId: "dbcf606e93ab5291",
                 mapTypeControl: true,
                 streetViewControl: false,
+                clickableIcons: false,
             } as google.maps.MapOptions,
         );
 
         // Dataset ID for Newark found by jazim, shown here .
-        const datasetId = "2b8bdf5a-5fbf-4706-96f3-4bdee1077c72";
+        const datasetId = "21db36cf-e6c2-4367-b1f4-7fb5857053db";
 
         datasetLayer = map.getDatasetFeatureLayer(datasetId);
         datasetLayer.style = applyStyle;
@@ -88,19 +90,14 @@ export const Map = ({
         datasetLayer.addListener("click", handleClick);
         datasetLayer.addListener("mousemove", handleMouseMove);
 
-        const inputField = document.getElementById("pac-input"); // Replace with your input element ID
-        const autocomplete = new Autocomplete(inputField);
-
-        autocomplete.addListener("place_changed", () => {
-            const place = autocomplete.getPlace();
-            if (place) {
-                // Update map center based on selected address
-                map.setCenter(place.geometry.location);
-                map.setZoom(16);
+        // Map event listener.
+        map.addListener("click", () => {
+            if (lastClickedFeatureIds?.length) {
+                lastClickedFeatureIds = [];
+                setLastClickedFeatureIds([]);
+                datasetLayer.style = applyStyle;
             }
         });
-
-        // Map event listener.
         map.addListener("mousemove", () => {
             // If the map gets a mousemove, that means there are no feature layers
             // with listeners registered under the mouse, so we clear the last
@@ -110,6 +107,19 @@ export const Map = ({
                 datasetLayer.style = applyStyle;
             }
         });
+
+        const inputField = document.getElementById(
+            "pac-input",
+        ) as HTMLInputElement; // Replace with your input element ID
+        const autocomplete = new Autocomplete(inputField);
+
+        autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+            if (place?.geometry?.location) {
+                map.panTo(place.geometry.location);
+            }
+        });
+
         // createAttribution(map, "Data source: NYC Open Data"); // not for this current dataset
         createAttribution(
             map,
@@ -160,7 +170,6 @@ export const Map = ({
 
     return (
         <>
-            <input id="pac-input" type="text" placeholder="Enter a location" />
             <div id="map" className={styles.map}></div>
         </>
     );

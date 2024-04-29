@@ -1,12 +1,26 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import "./App.css";
+import styles from "./App.module.css";
 import { ID_ATTRIBUTE_NAME, Map } from "./components/Map";
-import geoJson from "./assets/export.geojson" assert { type: "json" };
+import geoJson from "./assets/export.geojson";
 import { PrimaryNavigation } from "./components/PrimaryNavigation";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 
 const SQUARE_METRES_TO_SQUARE_FEET_FACTOR = 10.7639;
 
 function App() {
+    const app = initializeApp({
+        apiKey: "AIzaSyBWjMNpB8OfCyVhcARQUMBh9bDzrcxBOpc",
+        authDomain: "rentokil-map-area-mini-hack.firebaseapp.com",
+        projectId: "rentokil-map-area-mini-hack",
+        storageBucket: "rentokil-map-area-mini-hack.appspot.com",
+        messagingSenderId: "622316479711",
+        appId: "1:622316479711:web:76f9c31911ffd9284df56a",
+        measurementId: "G-R1Y623L7QJ",
+    });
+    getAnalytics(app);
+
     const [lastClickedFeatureIds, setLastClickedFeatureIds] = useState<
         string[]
     >([]);
@@ -91,10 +105,21 @@ function App() {
     return (
         <>
             <PrimaryNavigation />
-            <div>
-                {lastClickedFeatureIds?.length > 0
-                    ? `Area: ${displayArea} square foot.`
-                    : "Please select a bulding to see its area."}
+            <div className={styles.info}>
+                <div>
+                    {lastClickedFeatureIds?.length > 0
+                        ? `Area: ${displayArea} square foot.`
+                        : "Please select a bulding to see its area."}
+                </div>
+                <div>
+                    <input
+                        id="pac-input"
+                        type="text"
+                        data-lpignore="true"
+                        autoComplete="off"
+                        placeholder="Search by location or zip code..."
+                    />
+                </div>
             </div>
             {MemoizedMap}
         </>
