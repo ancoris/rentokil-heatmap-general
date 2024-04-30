@@ -10,17 +10,25 @@ const STYLE_DEFAULT = {
     fillOpacity: 0.3,
 };
 
+const RENTOKIL_RED = "#ed1c24";
+const AMBER = "#FFBF00";
+const STYLE_NON_CUSTOMER = {
+    ...STYLE_DEFAULT,
+    strokeColor: AMBER,
+    fillColor: AMBER,
+};
+
 const STYLE_CLICKED = {
     ...STYLE_DEFAULT,
-    strokeColor: "#ed1c24",
-    fillColor: "#ed1c24",
+    strokeColor: RENTOKIL_RED,
+    fillColor: RENTOKIL_RED,
     fillOpacity: 0.5,
 };
 
 const STYLE_MOUSE_MOVE = {
     ...STYLE_DEFAULT,
     strokeWeight: 4.0,
-    strokeColor: "#ed1c24",
+    strokeColor: RENTOKIL_RED,
 };
 
 export const Map = ({
@@ -143,7 +151,13 @@ export const Map = ({
         ) {
             return STYLE_MOUSE_MOVE;
         }
-        return STYLE_DEFAULT;
+        return Number(
+            datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME].slice(-1),
+        ) %
+            3 ===
+            0
+            ? STYLE_DEFAULT
+            : STYLE_NON_CUSTOMER;
     }
 
     function createAttribution(map: google.maps.Map, label: string) {
