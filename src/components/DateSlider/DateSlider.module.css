@@ -1,6 +1,7 @@
 div.timeSliderContainer {
     display: flex;
     align-items: center;
+    margin-block-start: 16px;
 
     div.timeSliderWrapper {
         --slider-width: 56em;
@@ -9,6 +10,7 @@ div.timeSliderContainer {
         --min: 0;
         --max: 100;
         --val: 90;
+        --forecast-color: fuchsia;
 
         display: flex;
         flex-direction: column-reverse;
@@ -47,6 +49,9 @@ div.timeSliderContainer {
                 background: var(--rentokil-red);
                 color: #fff;
             }
+            &.forecast ~ output {
+                background: var(--forecast-color);
+            }
         }
 
         .labels {
@@ -63,6 +68,28 @@ div.timeSliderContainer {
             );
             transform: translate(-50%) scale(0.9);
             white-space: nowrap;
+
+            &:last-child {
+                color: var(--forecast-color);
+            }
         }
+    }
+
+    button {
+        border: 1px solid transparent;
+        font-size: 1.5rem;
+        font-family: inherit;
+        background-color: #1a1a1a;
+        cursor: pointer;
+        transition: border-color 0.25s;
+        width: 40px;
+        white-space: nowrap;
+    }
+    button:hover {
+        border-color: #646cff;
+    }
+    button:focus,
+    button:focus-visible {
+        outline: 4px auto -webkit-focus-ring-color;
     }
 }

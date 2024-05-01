@@ -1,14 +1,16 @@
-import { ReactNode } from "react";
+import { type Dispatch, type SetStateAction } from "react";
+import PolygonArea from "../PolygonArea";
 import styles from "./Sidebar.module.css";
+import { SiteInfo } from "../SiteInfo/SiteInfo";
 
 const Sidebar = ({
-    content,
+    lastClickedFeatureIds,
     showSidebar,
     setShow,
 }: {
-    content: ReactNode;
+    lastClickedFeatureIds: string[];
     showSidebar: boolean;
-    setShow: (show: boolean) => void;
+    setShow: Dispatch<SetStateAction<boolean>>;
 }) => {
     return (
         <div className={styles.outer}>
@@ -26,7 +28,10 @@ const Sidebar = ({
                             X
                         </button>
                     </div>
-                    <div className={styles.content}>{content}</div>
+                    <div className={styles.content}>
+                        <PolygonArea {...{ lastClickedFeatureIds, setShow }} />
+                        <SiteInfo />
+                    </div>
                 </div>
             </div>
         </div>

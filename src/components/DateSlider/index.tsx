@@ -31,6 +31,11 @@ export const DateSlider: FunctionComponent<DateSliderProps> = ({
             "timeSlider",
         ) as HTMLInputElement;
         const timeSliderValue = parseInt(timeSlider.value);
+        if (timeSliderValue > 90) {
+            timeSlider.classList.add(styles.forecast);
+        } else {
+            timeSlider.classList.remove(styles.forecast);
+        }
         (timeSlider.nextElementSibling as HTMLOutputElement).value = daysAgo(
             90 - timeSliderValue,
         );
@@ -61,7 +66,6 @@ export const DateSlider: FunctionComponent<DateSliderProps> = ({
             "timeSlider",
         ) as HTMLInputElement;
         const timeSliderValue = parseInt(timeSlider.value);
-        console.log(timeSliderValue, intervalId);
         if (timeSliderValue < 100) {
             timeSlider.value = (timeSliderValue + 1).toString();
             handleTimeChange(false);

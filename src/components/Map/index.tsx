@@ -22,14 +22,11 @@ const STYLE_NON_CUSTOMER = {
 };
 
 const STYLE_CLICKED = {
-    ...STYLE_DEFAULT,
-    strokeColor: RENTOKIL_RED,
     fillColor: RENTOKIL_RED,
     fillOpacity: 0.5,
 };
 
 const STYLE_MOUSE_MOVE = {
-    ...STYLE_DEFAULT,
     strokeWeight: 4.0,
     strokeColor: RENTOKIL_RED,
 };
@@ -98,10 +95,14 @@ const getHeatMapData = (
 };
 
 export const Map = ({
+    lastClickedFeatureIds,
     setLastClickedFeatureIds,
 }: {
+    lastClickedFeatureIds: string[];
     setLastClickedFeatureIds: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
+    let map: google.maps.Map;
+
     const [timeSliderValue, setTimeSliderValue] = useState<number>(90);
     const [datasetLayer, setDatasetLayer] =
         useState<google.maps.FeatureLayer | null>(null);
@@ -109,12 +110,16 @@ export const Map = ({
         useState<boolean>(true);
     const [heatmap, setHeatmap] =
         useState<google.maps.visualization.HeatmapLayer | null>(null);
+    const [lastInteractedFeatureIds, setLastInteractedFeatureIds] = useState<
+        string[]
+    >([]);
 
     useEffect(() => {
         if (datasetLayer) {
             datasetLayer.style = applyStyle;
         }
-    }, [datasetLayerVisible]);
+    }, [datasetLayerVisible, lastInteractedFeatureIds, lastClickedFeatureIds]);
+
     useEffect(() => {
         if (
             datasetLayer &&
@@ -128,41 +133,35 @@ export const Map = ({
             }
         }
     }, [timeSliderValue]);
-    let map: google.maps.Map;
-    let lastInteractedFeatureIds: string[] = [];
-    let lastClickedFeatureIds: string[] = [];
 
-    function handleClick(e: google.maps.FeatureMouseEvent) {
+    const handleClick = (e: google.maps.FeatureMouseEvent): void => {
         if (e.features) {
             e.stop();
-            lastClickedFeatureIds = e.features.map((f) => {
-                return (f as google.maps.DatasetFeature).datasetAttributes[
-                    ID_ATTRIBUTE_NAME
-                ];
-            });
-        }
-        setLastClickedFeatureIds(lastClickedFeatureIds);
-
-        if (datasetLayer) {
-            datasetLayer.style = applyStyle;
-        }
-    }
-
-    function handleMouseMove(e: google.maps.FeatureMouseEvent) {
-        if (e.features) {
-            lastInteractedFeatureIds = e.features.map(
-                (f) =>
-                    (f as google.maps.DatasetFeature).datasetAttributes[
+            setLastClickedFeatureIds(
+                e.features.map((f) => {
+                    return (f as google.maps.DatasetFeature).datasetAttributes[
                         ID_ATTRIBUTE_NAME
-                    ],
+                    ];
+                }),
             );
         }
-        if (datasetLayer) {
-            datasetLayer.style = applyStyle;
-        }
-    }
+    };
 
-    function createCenterControl() {
+    const handleMouseMove = (e: google.maps.FeatureMouseEvent): void => {
+        if (e.features) {
+            e.stop();
+            setLastInteractedFeatureIds(
+                e.features.map(
+                    (f) =>
+                        (f as google.maps.DatasetFeature).datasetAttributes[
+                            ID_ATTRIBUTE_NAME
+                        ],
+                ),
+            );
+        }
+    };
+
+    const createCenterControl = (): HTMLInputElement => {
         const controlInput = document.createElement("input");
 
         // Set CSS for the control.
@@ -186,9 +185,9 @@ export const Map = ({
         controlInput.placeholder = "Search by location or zip code...";
 
         return controlInput;
-    }
+    };
 
-    async function initMap() {
+    const initMap = async (): Promise<void> => {
         // Request needed libraries.
         const { Map } = (await google.maps.importLibrary(
             "maps",
@@ -203,7 +202,7 @@ export const Map = ({
         map = new Map(
             document.getElementById("map") as HTMLElement,
             {
-                zoom: 14,
+                zoom: 15,
                 center: START_POSITION,
                 mapId: "dbcf606e93ab5291",
                 mapTypeControl: true,
@@ -225,7 +224,7 @@ export const Map = ({
         localDatasetLayer.style = applyStyle;
 
         const localHeatmapLayer = new HeatmapLayer({
-            data: getHeatMapData(0),
+            data: getHeatMapData(90),
         });
         localHeatmapLayer.set("radius", DEFAULT_HEATMAP_RADIUS);
         localHeatmapLayer.setMap(map);
@@ -233,28 +232,18 @@ export const Map = ({
 
         localDatasetLayer.addListener("click", handleClick);
         localDatasetLayer.addListener("mousemove", handleMouseMove);
+        console.log("localDatasetLayer", localDatasetLayer);
         setDatasetLayer(localDatasetLayer);
 
         // Map event listener.
         map.addListener("click", () => {
-            if (lastClickedFeatureIds?.length) {
-                lastClickedFeatureIds = [];
-                setLastClickedFeatureIds([]);
-                if (datasetLayer) {
-                    datasetLayer.style = applyStyle;
-                }
-            }
+            setLastClickedFeatureIds([]);
         });
         map.addListener("mousemove", () => {
             // If the map gets a mousemove, that means there are no feature layers
             // with listeners registered under the mouse, so we clear the last
             // interacted feature ids.
-            if (lastInteractedFeatureIds?.length) {
-                lastInteractedFeatureIds = [];
-                if (datasetLayer) {
-                    datasetLayer.style = applyStyle;
-                }
-            }
+            setLastInteractedFeatureIds([]);
         });
         map.addListener("zoom_changed", () => {
             if (heatmap) {
@@ -288,6 +277,9 @@ export const Map = ({
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(
             centerControlDiv,
         );
+        map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
+            getHeatmapControl(),
+        );
 
         const autocomplete = new Autocomplete(searchControl);
 
@@ -303,37 +295,61 @@ export const Map = ({
             map,
             "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
         );
-    }
+    };
 
-    function applyStyle(params: google.maps.FeatureStyleFunctionOptions) {
+    const getHeatmapControl = (): HTMLDivElement => {
+        const heatmapControlDiv = document.createElement("div");
+        const heatmapControlButton = document.createElement("button");
+        heatmapControlButton.textContent = "Toggle Heatmap";
+        heatmapControlButton.addEventListener("click", () => {
+            if (heatmap) {
+                const mapVal = heatmap.getMap() ? null : map;
+                heatmap.setMap(mapVal);
+            }
+        });
+        heatmapControlDiv.appendChild(heatmapControlButton);
+        return heatmapControlDiv;
+    };
+
+    const featureIdIsRentokilCustomer = (
+        datasetFeature: google.maps.DatasetFeature,
+    ): boolean => {
+        return (
+            Number(
+                datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME].slice(-1),
+            ) %
+                3 ===
+            0
+        );
+    };
+
+    const applyStyle: google.maps.FeatureStyleFunction = (params) => {
+        console.log("applyStyle", params, datasetLayerVisible);
         if (!datasetLayerVisible) {
             return null;
         }
         const datasetFeature = params.feature as google.maps.DatasetFeature;
+        const baseStyle = featureIdIsRentokilCustomer(datasetFeature)
+            ? STYLE_DEFAULT
+            : STYLE_NON_CUSTOMER;
         if (
             lastClickedFeatureIds.includes(
                 datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME],
             )
         ) {
-            return STYLE_CLICKED;
+            return { ...baseStyle, ...STYLE_CLICKED };
         }
         if (
             lastInteractedFeatureIds.includes(
                 datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME],
             )
         ) {
-            return STYLE_MOUSE_MOVE;
+            return { ...baseStyle, ...STYLE_MOUSE_MOVE };
         }
-        return Number(
-            datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME].slice(-1),
-        ) %
-            3 ===
-            0
-            ? STYLE_DEFAULT
-            : STYLE_NON_CUSTOMER;
-    }
+        return baseStyle;
+    };
 
-    function createAttribution(map: google.maps.Map, label: string) {
+    const createAttribution = (map: google.maps.Map, label: string): void => {
         const attributionDiv = document.createElement("div");
         const attributionLabel = document.createElement("div");
 
@@ -351,7 +367,7 @@ export const Map = ({
         map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(
             attributionDiv,
         );
-    }
+    };
 
     useMemo(() => {
         void initMap();

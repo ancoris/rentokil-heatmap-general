@@ -29,31 +29,16 @@ body {
     margin: 0;
     place-items: center;
     min-width: 320px;
+
+    div[data-lastpass-icon-root],
+    div[data-lastpass-root] {
+        display: none;
+    }
 }
 
 h1 {
     font-size: 3.2em;
     line-height: 1.1;
-}
-
-button {
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    transition: border-color 0.25s;
-    width: 40px;
-    white-space: nowrap;
-}
-button:hover {
-    border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
 }
 
 @media (prefers-color-scheme: light) {
