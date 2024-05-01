@@ -115,7 +115,11 @@ export const Map = ({
         }
     }, [datasetLayerVisible]);
     useEffect(() => {
-        if (datasetLayer && heatmap && timeSliderValue) {
+        if (
+            datasetLayer &&
+            heatmap &&
+            (timeSliderValue !== null || timeSliderValue !== undefined)
+        ) {
             try {
                 heatmap.setData(getHeatMapData(timeSliderValue));
             } catch (e) {

@@ -3,6 +3,7 @@ import {
     type CSSProperties,
     type SetStateAction,
     type Dispatch,
+    useState,
 } from "react";
 import styles from "./DateSlider.module.css";
 
@@ -15,6 +16,9 @@ export const DateSlider: FunctionComponent<DateSliderProps> = ({
     setDatasetLayerVisible,
     setTimeSliderValue,
 }) => {
+    const [animationIntervalId, setAnimationIntervalId] = useState<
+        number | null
+    >(null);
     let timeoutId: number;
     const handleTimeChange = (
         setTimeoutForDatasetLaterVisibility = true,
@@ -52,34 +56,40 @@ export const DateSlider: FunctionComponent<DateSliderProps> = ({
         return days >= 0 ? dt : `AI Forecast: ${dt}`;
     };
 
-    const playAnimation = () => {
+    const playAnimation = (intervalId: number) => {
         const timeSlider = document.getElementById(
             "timeSlider",
         ) as HTMLInputElement;
-        timeSlider.value = "0";
-        handleTimeChange(false);
-        let intervalId: number | null = null;
-        const play = () => {
-            const timeSlider = document.getElementById(
-                "timeSlider",
-            ) as HTMLInputElement;
-            const timeSliderValue = parseInt(timeSlider.value);
-            if (timeSliderValue < 100) {
-                timeSlider.value = (timeSliderValue + 1).toString();
-                handleTimeChange(false);
-            } else if (intervalId) {
-                window.clearInterval(intervalId);
-                timeSlider.value = "90";
-                handleTimeChange();
-            }
-        };
-        intervalId = window.setInterval(play, 200);
+        const timeSliderValue = parseInt(timeSlider.value);
+        console.log(timeSliderValue, intervalId);
+        if (timeSliderValue < 100) {
+            timeSlider.value = (timeSliderValue + 1).toString();
+            handleTimeChange(false);
+        } else if (intervalId) {
+            window.clearInterval(intervalId);
+            setAnimationIntervalId(null);
+            handleTimeChange();
+        }
     };
-    const resetSlider = () => {
+
+    const toggleAnimation = () => {
+        if (animationIntervalId) {
+            window.clearInterval(animationIntervalId);
+            setAnimationIntervalId(null);
+            handleTimeChange();
+        } else {
+            let intervalId: number;
+            intervalId = window.setInterval(() => {
+                playAnimation(intervalId);
+            }, 200);
+            setAnimationIntervalId(intervalId);
+        }
+    };
+    const resetSlider = (resetVal: number): void => {
         const timeSlider = document.getElementById(
             "timeSlider",
         ) as HTMLInputElement;
-        timeSlider.value = "90";
+        timeSlider.value = resetVal.toString();
         handleTimeChange();
     };
 
@@ -127,8 +137,30 @@ export const DateSlider: FunctionComponent<DateSliderProps> = ({
                 </datalist>
             </div>
             <div className={styles.timeSliderBtns}>
-                <button onClick={playAnimation}>Play</button>
-                <button onClick={resetSlider}>Reset</button>
+                <button
+                    onClick={() => {
+                        resetSlider(0);
+                    }}
+                >
+                    ⏮️
+                </button>
+                <button onClick={toggleAnimation}>
+                    {animationIntervalId ? "⏸️" : "▶️"}
+                </button>
+                <button
+                    onClick={() => {
+                        resetSlider(100);
+                    }}
+                >
+                    ⏭️
+                </button>
+                <button
+                    onClick={() => {
+                        resetSlider(90);
+                    }}
+                >
+                    🔄
+                </button>
             </div>
         </div>
     );
