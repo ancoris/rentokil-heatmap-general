@@ -1,0 +1,68 @@
+div.timeSliderContainer {
+    display: flex;
+    align-items: center;
+
+    div.timeSliderWrapper {
+        --slider-width: 56em;
+        --label-margins: 0.75em;
+        --number-of-steps: 10;
+        --min: 0;
+        --max: 100;
+        --val: 90;
+
+        display: flex;
+        flex-direction: column-reverse;
+        position: relative;
+        width: var(--slider-width);
+        margin-block: 48px;
+        margin-inline-start: 100px;
+        margin-inline-end: 48px;
+
+        label {
+            margin-inline-start: -100px;
+            margin-block-end: -50px;
+        }
+
+        input[type="range"] {
+            margin-block-start: 16px;
+            margin-block-end: 8px;
+            margin-inline: 0;
+            padding: 0;
+            width: 100%;
+
+            & ~ output {
+                display: block;
+                position: absolute;
+                left: var(--label-margins);
+                top: -48px;
+                padding: 2px 8px;
+                border-radius: 4px;
+                transform: translate(
+                    calc(
+                        (var(--val) - var(--min)) / (var(--max) - var(--min)) *
+                            (var(--slider-width) - (2 * var(--label-margins))) -
+                            50%
+                    )
+                );
+                background: var(--rentokil-red);
+                color: #fff;
+            }
+        }
+
+        .labels {
+            position: absolute;
+            bottom: 0;
+            left: var(--label-margins);
+        }
+
+        .labels span {
+            position: absolute;
+            left: calc(
+                var(--i) * (var(--slider-width) - (2 * var(--label-margins))) /
+                    var(--number-of-steps)
+            );
+            transform: translate(-50%) scale(0.9);
+            white-space: nowrap;
+        }
+    }
+}
