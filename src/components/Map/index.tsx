@@ -62,6 +62,7 @@ const getHeatMapData = (
 
     for (let i = 0; i < geoJson.features.length; i++) {
         const f = geoJson.features[i];
+        // avoid using south east corner of every building for heat map, mix it up to make it more interesting
         const corner = getRandomIntInclusive(0, 3);
         const location =
             f.geometry.coordinates[0][
@@ -103,6 +104,7 @@ export const Map = ({
     let lastInteractedFeatureIds: string[] = [];
     let lastClickedFeatureIds: string[] = [];
     let datasetLayer: google.maps.FeatureLayer;
+    let timeoutId: number;
 
     function handleClick(e: google.maps.FeatureMouseEvent) {
         if (e.features) {
@@ -131,12 +133,20 @@ export const Map = ({
     }
 
     const handleTimeChange = () => {
+        if (timeoutId) {
+            window.clearTimeout(timeoutId);
+        }
+        datasetLayer.style = null;
         heatmap.setData(
             getHeatMapData(
                 (document.getElementById("timeSlider") as HTMLInputElement)
                     .value as unknown as number,
             ),
         );
+        timeoutId = window.setTimeout(() => {
+            console.log("timeout fired");
+            datasetLayer.style = applyStyle;
+        }, 400);
     };
 
     async function initMap() {
@@ -155,7 +165,7 @@ export const Map = ({
         map = new Map(
             document.getElementById("map") as HTMLElement,
             {
-                zoom: 16,
+                zoom: 14,
                 center: position,
                 mapId: "dbcf606e93ab5291",
                 mapTypeControl: true,
@@ -296,13 +306,7 @@ export const Map = ({
                     defaultValue={0}
                     step={1}
                     list="markers"
-                    onFocus={() => {
-                        datasetLayer.style = null;
-                    }}
                     onChange={handleTimeChange}
-                    onBlur={() => {
-                        datasetLayer.style = applyStyle;
-                    }}
                 />
                 <datalist id="markers">
                     <option value="0"></option>
