@@ -4,4 +4,5 @@
  */
 div.map {
     height: 100%;
+    margin-block-start: 16px;
 }
