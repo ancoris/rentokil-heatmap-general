@@ -110,6 +110,7 @@ export const Map = ({
         useState<boolean>(true);
     const [heatmap, setHeatmap] =
         useState<google.maps.visualization.HeatmapLayer | null>(null);
+    const [heatmapVisible, setHeatmapVisible] = useState<boolean>(false);
     const [lastInteractedFeatureIds, setLastInteractedFeatureIds] = useState<
         string[]
     >([]);
@@ -227,12 +228,10 @@ export const Map = ({
             data: getHeatMapData(90),
         });
         localHeatmapLayer.set("radius", DEFAULT_HEATMAP_RADIUS);
-        localHeatmapLayer.setMap(map);
         setHeatmap(localHeatmapLayer);
 
         localDatasetLayer.addListener("click", handleClick);
         localDatasetLayer.addListener("mousemove", handleMouseMove);
-        console.log("localDatasetLayer", localDatasetLayer);
         setDatasetLayer(localDatasetLayer);
 
         // Map event listener.
@@ -301,10 +300,12 @@ export const Map = ({
         const heatmapControlDiv = document.createElement("div");
         const heatmapControlButton = document.createElement("button");
         heatmapControlButton.textContent = "Toggle Heatmap";
+        heatmapControlButton.classList.add(styles.toggleHeatMap);
         heatmapControlButton.addEventListener("click", () => {
             if (heatmap) {
                 const mapVal = heatmap.getMap() ? null : map;
                 heatmap.setMap(mapVal);
+                setHeatmapVisible(mapVal !== null);
             }
         });
         heatmapControlDiv.appendChild(heatmapControlButton);
@@ -324,7 +325,6 @@ export const Map = ({
     };
 
     const applyStyle: google.maps.FeatureStyleFunction = (params) => {
-        console.log("applyStyle", params, datasetLayerVisible);
         if (!datasetLayerVisible) {
             return null;
         }
@@ -375,14 +375,13 @@ export const Map = ({
 
     return (
         <div className={styles.mapWrapper}>
-            {datasetLayer ? (
-                <DateSlider
-                    {...{
-                        setDatasetLayerVisible,
-                        setTimeSliderValue,
-                    }}
-                />
-            ) : null}
+            <DateSlider
+                {...{
+                    setDatasetLayerVisible,
+                    setTimeSliderValue,
+                    heatmapVisible,
+                }}
+            />
             <div id="map" className={styles.map}></div>
         </div>
     );

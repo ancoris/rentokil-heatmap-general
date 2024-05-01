@@ -15,7 +15,9 @@ const Sidebar = ({
     return (
         <div className={styles.outer}>
             <div
-                className={showSidebar ? styles.sidebarActive : styles.sidebar}
+                className={`${styles.sidebar} ${
+                    showSidebar ? styles.sidebarActive : ""
+                }`}
             >
                 <div className={styles.inner}>
                     <div className={styles.actions}>
