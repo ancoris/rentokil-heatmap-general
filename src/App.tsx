@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import "./App.css";
-import styles from "./App.module.css";
 import { ID_ATTRIBUTE_NAME, Map } from "./components/Map";
 import geoJson from "./assets/export.geojson";
 import { PrimaryNavigation } from "./components/PrimaryNavigation";
