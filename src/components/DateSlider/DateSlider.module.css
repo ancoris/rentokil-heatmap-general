@@ -75,21 +75,27 @@ div.timeSliderContainer {
         }
     }
 
-    button {
-        border: 1px solid transparent;
-        font-size: 1.5rem;
-        font-family: inherit;
-        background-color: #1a1a1a;
-        cursor: pointer;
-        transition: border-color 0.25s;
-        width: 40px;
-        white-space: nowrap;
-    }
-    button:hover {
-        border-color: #646cff;
-    }
-    button:focus,
-    button:focus-visible {
-        outline: 4px auto -webkit-focus-ring-color;
+    div.timeSliderBtns {
+        font-family: Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji,
+            Android Emoji, EmojiSymbols, EmojiOne Mozilla, Twemoji Mozilla,
+            Segoe UI Symbol, Noto Color Emoji Compat, emoji;
+
+        button {
+            border: 1px solid transparent;
+            font-size: 1.5rem;
+            font-family: inherit;
+            background-color: #1a1a1a;
+            cursor: pointer;
+            transition: border-color 0.25s;
+            width: 40px;
+            white-space: nowrap;
+        }
+        button:hover {
+            border-color: #646cff;
+        }
+        button:focus,
+        button:focus-visible {
+            outline: 4px auto -webkit-focus-ring-color;
+        }
     }
 }
