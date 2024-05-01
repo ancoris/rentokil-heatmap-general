@@ -1,6 +1,7 @@
 div.timeSliderContainer {
     display: flex;
     align-items: center;
+    margin-block-start: 16px;
 
     div.timeSliderWrapper {
         --slider-width: 56em;
@@ -9,6 +10,7 @@ div.timeSliderContainer {
         --min: 0;
         --max: 100;
         --val: 90;
+        --forecast-color: fuchsia;
 
         display: flex;
         flex-direction: column-reverse;
@@ -47,6 +49,9 @@ div.timeSliderContainer {
                 background: var(--rentokil-red);
                 color: #fff;
             }
+            &.forecast ~ output {
+                background: var(--forecast-color);
+            }
         }
 
         .labels {
@@ -63,6 +68,10 @@ div.timeSliderContainer {
             );
             transform: translate(-50%) scale(0.9);
             white-space: nowrap;
+
+            &:last-child {
+                color: var(--forecast-color);
+            }
         }
     }
 }

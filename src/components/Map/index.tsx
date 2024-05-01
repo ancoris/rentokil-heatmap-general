@@ -141,6 +141,7 @@ export const Map = ({
                 ];
             });
         }
+        debugger;
         setLastClickedFeatureIds(lastClickedFeatureIds);
 
         if (datasetLayer) {
