@@ -1,0 +1,72 @@
+div.outer {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+div.showButton {
+    display: flex;
+    background-color: magenta;
+    color: #fff;
+    height: 50px;
+    align-items: center;
+    font-size: 35px;
+    cursor: pointer;
+}
+
+div.sidebar {
+    color: #fff;
+    width: 270px;
+    display: flex;
+    position: fixed;
+    top: 108px;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3),
+        0 2px 6px 2px rgba(60, 64, 67, 0.15);
+
+    left: -100%;
+    transition: 850ms;
+}
+
+div.sidebarActive {
+    color: #fff;
+    width: 270px;
+    display: flex;
+    position: fixed;
+    top: 108px;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3),
+        0 2px 6px 2px rgba(60, 64, 67, 0.15);
+
+    z-index: 10;
+    left: 0;
+    transition: 350ms;
+}
+
+div.actions {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+button.hideIcon {
+    font-size: 25px;
+    width: fit-content;
+    color: black;
+    cursor: pointer;
+    border: 1px solid black;
+    background: none;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+div.inner {
+    color: black;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: scroll;
+    gap: 45px;
+    width: 100%;
+    padding: 8px;
+    background-color: white;
+}

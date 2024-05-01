@@ -6,10 +6,12 @@ import geoJson from "./assets/export.geojson";
 import { PrimaryNavigation } from "./components/PrimaryNavigation";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import Sidebar from "./components/Sidebar/Sidebar";
 
 const SQUARE_METRES_TO_SQUARE_FEET_FACTOR = 10.7639;
 
 function App() {
+    const [showSidebar, setShowSidebar] = useState(false);
     const app = initializeApp({
         apiKey: "AIzaSyBWjMNpB8OfCyVhcARQUMBh9bDzrcxBOpc",
         authDomain: "rentokil-map-area-mini-hack.firebaseapp.com",
@@ -50,6 +52,8 @@ function App() {
         },
         [],
     );
+
+    const setShow = (show: boolean) => setShowSidebar(show);
 
     useEffect(() => {
         (
@@ -95,6 +99,9 @@ function App() {
                             ),
                         ),
                     );
+                    if (lastClickedFeatureIds?.length > 0) {
+                        setShow(true);
+                    }
                 }
             })
             .catch((error: unknown) => {
@@ -105,22 +112,17 @@ function App() {
     return (
         <>
             <PrimaryNavigation />
-            <div className={styles.info}>
-                <div>
-                    {lastClickedFeatureIds?.length > 0
-                        ? `Area: ${displayArea} square foot.`
-                        : "Please select a bulding to see its area."}
-                </div>
-                <div>
-                    <input
-                        id="pac-input"
-                        type="text"
-                        data-lpignore="true"
-                        autoComplete="off"
-                        placeholder="Search by location or zip code..."
-                    />
-                </div>
-            </div>
+            <Sidebar
+                content={
+                    <div>
+                        {lastClickedFeatureIds?.length > 0
+                            ? `Area: ${displayArea} square foot.`
+                            : "Please select a bulding to see its area."}
+                    </div>
+                }
+                showSidebar={showSidebar}
+                setShow={setShow}
+            />
             {MemoizedMap}
         </>
     );

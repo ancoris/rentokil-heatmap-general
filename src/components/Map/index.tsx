@@ -35,6 +35,7 @@ const STYLE_MOUSE_MOVE = {
 };
 
 const DEFAULT_HEATMAP_RADIUS = 30;
+const START_POSITION = { lat: 40.735657, lng: -74.172363 }; // Newark, NJ
 
 const psudoRandomNumberGenerator = (seed: number): (() => number) => {
     // https://stackoverflow.com/a/47593316/498463
@@ -161,6 +162,37 @@ export const Map = ({
         }
     }
 
+    function createCenterControl(map: google.maps.Map) {
+        const controlInput = document.createElement("input");
+
+        // Set CSS for the control.
+        controlInput.style.backgroundColor = "#fff";
+        controlInput.style.border = "2px solid #fff";
+        controlInput.style.borderRadius = "3px";
+        controlInput.style.boxShadow = "0 2px 6px rgba(0,0,0,.3)";
+        controlInput.style.color = "rgb(25,25,25)";
+        controlInput.style.cursor = "pointer";
+        controlInput.style.fontFamily = "Roboto,Arial,sans-serif";
+        controlInput.style.fontSize = "16px";
+        controlInput.style.lineHeight = "38px";
+        controlInput.style.margin = "8px 16px";
+        controlInput.style.padding = "0 5px";
+        controlInput.style.width = "260px";
+
+        controlInput.id = "pac-input2";
+        controlInput.type = "text";
+        controlInput.setAttribute("data-lpignore", "true");
+        controlInput.autocomplete = "off";
+        controlInput.placeholder = "Search by location or zip code...";
+
+        // Setup the click event listeners: simply set the map to Chicago.
+        controlInput.addEventListener("click", () => {
+            map.setCenter(START_POSITION);
+        });
+
+        return controlInput;
+    }
+
     async function initMap() {
         // Request needed libraries.
         const { Map } = (await google.maps.importLibrary(
@@ -173,14 +205,17 @@ export const Map = ({
             "visualization",
         )) as google.maps.VisualizationLibrary;
 
-        const position = { lat: 40.735657, lng: -74.172363 }; // Newark, NJ
         map = new Map(
             document.getElementById("map") as HTMLElement,
             {
                 zoom: 14,
-                center: position,
+                center: START_POSITION,
                 mapId: "dbcf606e93ab5291",
                 mapTypeControl: true,
+                mapTypeControlOptions: {
+                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                    position: google.maps.ControlPosition.TOP_RIGHT,
+                },
                 streetViewControl: false,
                 clickableIcons: false,
                 rotateControl: true,
@@ -248,10 +283,18 @@ export const Map = ({
             }
         });
 
-        const inputField = document.getElementById(
-            "pac-input",
-        ) as HTMLInputElement; // Replace with your input element ID
-        const autocomplete = new Autocomplete(inputField);
+        // Create the DIV to hold the control.
+        const centerControlDiv = document.createElement("div");
+        // Create the control.
+        const searchControl = createCenterControl(map);
+        // Append the control to the DIV.
+        centerControlDiv.appendChild(searchControl);
+
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(
+            centerControlDiv,
+        );
+
+        const autocomplete = new Autocomplete(searchControl);
 
         autocomplete.addListener("place_changed", () => {
             const place = autocomplete.getPlace();
