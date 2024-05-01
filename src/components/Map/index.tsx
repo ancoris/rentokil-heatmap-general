@@ -277,7 +277,7 @@ export const Map = ({
             centerControlDiv,
         );
         map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
-            getHeatmapControl(),
+            getHeatmapControl(localHeatmapLayer),
         );
 
         const autocomplete = new Autocomplete(searchControl);
@@ -296,15 +296,18 @@ export const Map = ({
         );
     };
 
-    const getHeatmapControl = (): HTMLDivElement => {
+    const getHeatmapControl = (
+        localHeatmapLayer: google.maps.visualization.HeatmapLayer,
+    ): HTMLDivElement => {
         const heatmapControlDiv = document.createElement("div");
         const heatmapControlButton = document.createElement("button");
         heatmapControlButton.textContent = "Toggle Heatmap";
         heatmapControlButton.classList.add(styles.toggleHeatMap);
         heatmapControlButton.addEventListener("click", () => {
-            if (heatmap) {
-                const mapVal = heatmap.getMap() ? null : map;
-                heatmap.setMap(mapVal);
+            const hm = heatmap ?? localHeatmapLayer;
+            if (hm) {
+                const mapVal = hm.getMap() ? null : map;
+                hm.setMap(mapVal);
                 setHeatmapVisible(mapVal !== null);
             }
         });
