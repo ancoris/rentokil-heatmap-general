@@ -1,8 +1,10 @@
 #root {
-    height: calc(100vh - 4rem - 108px - 22px - 24px - 65px);
+    height: 100vh;
     width: 100vw;
-    margin: 0 auto;
-    text-align: center;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 div.wrapper {

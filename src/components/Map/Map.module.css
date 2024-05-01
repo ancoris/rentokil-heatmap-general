@@ -1,8 +1,17 @@
-/* 
- * Always set the map height explicitly to define the size of the div element
- * that contains the map. 
- */
-div.map {
+div.mapWrapper {
+    /* 
+    * Always set the map height explicitly to define the size of the div element
+    * that contains the map. 
+    */
     height: 100%;
-    margin-block-start: 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    div.map {
+        height: 100%;
+        width: 100%;
+        flex-grow: 1;
+    }
 }

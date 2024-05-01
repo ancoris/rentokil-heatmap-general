@@ -1,5 +1,7 @@
+import { useState, useEffect, useMemo } from "react";
 import styles from "./Map.module.css";
 import geoJson from "../../assets/export.geojson";
+import { DateSlider } from "../DateSlider";
 
 export const ID_ATTRIBUTE_NAME = "@id";
 
@@ -63,6 +65,7 @@ const getHeatMapData = (
 
     for (let i = 0; i < geoJson.features.length; i++) {
         const f = geoJson.features[i];
+        // avoid using south east corner of every building for heat map, mix it up to make it more interesting
         const corner = getRandomIntInclusive(0, 3);
         const location =
             f.geometry.coordinates[0][
@@ -86,7 +89,7 @@ const getHeatMapData = (
         let offset = rndSeed * 100;
         let index = offset + i;
         if (index >= locations.length) {
-            offset = (79 - (rndSeed - 79)) * 100;
+            offset = (75 - (rndSeed - 75)) * 100;
             index = offset + i;
         }
         const location = locations[index];
@@ -99,11 +102,31 @@ export const Map = ({
 }: {
     setLastClickedFeatureIds: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
+    const [timeSliderValue, setTimeSliderValue] = useState<number>(90);
+    const [datasetLayer, setDatasetLayer] =
+        useState<google.maps.FeatureLayer | null>(null);
+    const [datasetLayerVisible, setDatasetLayerVisible] =
+        useState<boolean>(true);
+    const [heatmap, setHeatmap] =
+        useState<google.maps.visualization.HeatmapLayer | null>(null);
+
+    useEffect(() => {
+        if (datasetLayer) {
+            datasetLayer.style = applyStyle;
+        }
+    }, [datasetLayerVisible]);
+    useEffect(() => {
+        if (datasetLayer && heatmap && timeSliderValue) {
+            try {
+                heatmap.setData(getHeatMapData(timeSliderValue));
+            } catch (e) {
+                console.error(e, timeSliderValue);
+            }
+        }
+    }, [timeSliderValue]);
     let map: google.maps.Map;
-    let heatmap: google.maps.visualization.HeatmapLayer;
     let lastInteractedFeatureIds: string[] = [];
     let lastClickedFeatureIds: string[] = [];
-    let datasetLayer: google.maps.FeatureLayer;
 
     function handleClick(e: google.maps.FeatureMouseEvent) {
         if (e.features) {
@@ -116,7 +139,9 @@ export const Map = ({
         }
         setLastClickedFeatureIds(lastClickedFeatureIds);
 
-        datasetLayer.style = applyStyle;
+        if (datasetLayer) {
+            datasetLayer.style = applyStyle;
+        }
     }
 
     function handleMouseMove(e: google.maps.FeatureMouseEvent) {
@@ -128,17 +153,10 @@ export const Map = ({
                     ],
             );
         }
-        datasetLayer.style = applyStyle;
+        if (datasetLayer) {
+            datasetLayer.style = applyStyle;
+        }
     }
-
-    const handleTimeChange = () => {
-        heatmap.setData(
-            getHeatMapData(
-                (document.getElementById("timeSlider") as HTMLInputElement)
-                    .value as unknown as number,
-            ),
-        );
-    };
 
     function createCenterControl(map: google.maps.Map) {
         const controlInput = document.createElement("input");
@@ -186,7 +204,7 @@ export const Map = ({
         map = new Map(
             document.getElementById("map") as HTMLElement,
             {
-                zoom: 16,
+                zoom: 14,
                 center: START_POSITION,
                 mapId: "dbcf606e93ab5291",
                 mapTypeControl: true,
@@ -203,24 +221,29 @@ export const Map = ({
         // Dataset ID for Newark found by jazim, shown here .
         const datasetId = "21db36cf-e6c2-4367-b1f4-7fb5857053db";
 
-        datasetLayer = map.getDatasetFeatureLayer(datasetId);
-        datasetLayer.style = applyStyle;
+        const localDatasetLayer = map.getDatasetFeatureLayer(datasetId);
 
-        heatmap = new HeatmapLayer({
+        localDatasetLayer.style = applyStyle;
+
+        const localHeatmapLayer = new HeatmapLayer({
             data: getHeatMapData(0),
         });
-        heatmap.set("radius", DEFAULT_HEATMAP_RADIUS);
-        heatmap.setMap(map);
+        localHeatmapLayer.set("radius", DEFAULT_HEATMAP_RADIUS);
+        localHeatmapLayer.setMap(map);
+        setHeatmap(localHeatmapLayer);
 
-        datasetLayer.addListener("click", handleClick);
-        datasetLayer.addListener("mousemove", handleMouseMove);
+        localDatasetLayer.addListener("click", handleClick);
+        localDatasetLayer.addListener("mousemove", handleMouseMove);
+        setDatasetLayer(localDatasetLayer);
 
         // Map event listener.
         map.addListener("click", () => {
             if (lastClickedFeatureIds?.length) {
                 lastClickedFeatureIds = [];
                 setLastClickedFeatureIds([]);
-                datasetLayer.style = applyStyle;
+                if (datasetLayer) {
+                    datasetLayer.style = applyStyle;
+                }
             }
         });
         map.addListener("mousemove", () => {
@@ -229,26 +252,30 @@ export const Map = ({
             // interacted feature ids.
             if (lastInteractedFeatureIds?.length) {
                 lastInteractedFeatureIds = [];
-                datasetLayer.style = applyStyle;
+                if (datasetLayer) {
+                    datasetLayer.style = applyStyle;
+                }
             }
         });
         map.addListener("zoom_changed", () => {
-            const zoom = map.getZoom();
-            switch (zoom) {
-                case 16:
-                case 17:
-                case 18:
-                case 19:
-                    heatmap.set("radius", DEFAULT_HEATMAP_RADIUS + 30);
-                    break;
-                case 20:
-                case 21:
-                case 22:
-                    heatmap.set("radius", DEFAULT_HEATMAP_RADIUS + 60);
-                    break;
-                default:
-                    heatmap.set("radius", DEFAULT_HEATMAP_RADIUS);
-                    break;
+            if (heatmap) {
+                const zoom = map.getZoom();
+                switch (zoom) {
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                        heatmap.set("radius", DEFAULT_HEATMAP_RADIUS + 30);
+                        break;
+                    case 20:
+                    case 21:
+                    case 22:
+                        heatmap.set("radius", DEFAULT_HEATMAP_RADIUS + 60);
+                        break;
+                    default:
+                        heatmap.set("radius", DEFAULT_HEATMAP_RADIUS);
+                        break;
+                }
             }
         });
 
@@ -280,6 +307,9 @@ export const Map = ({
     }
 
     function applyStyle(params: google.maps.FeatureStyleFunctionOptions) {
+        if (!datasetLayerVisible) {
+            return null;
+        }
         const datasetFeature = params.feature as google.maps.DatasetFeature;
         if (
             lastClickedFeatureIds.includes(
@@ -324,38 +354,21 @@ export const Map = ({
         );
     }
 
-    void initMap();
+    useMemo(() => {
+        void initMap();
+    }, []);
 
     return (
-        <>
-            <label htmlFor="timeSlider">Date / Time</label>
-            <div>
-                <input
-                    type="range"
-                    id="timeSlider"
-                    name="timeSlider"
-                    min={0}
-                    max={100}
-                    defaultValue={0}
-                    step={1}
-                    list="markers"
-                    onFocus={() => {
-                        datasetLayer.style = null;
-                    }}
-                    onChange={handleTimeChange}
-                    onBlur={() => {
-                        datasetLayer.style = applyStyle;
+        <div className={styles.mapWrapper}>
+            {datasetLayer ? (
+                <DateSlider
+                    {...{
+                        setDatasetLayerVisible,
+                        setTimeSliderValue,
                     }}
                 />
-                <datalist id="markers">
-                    <option value="0"></option>
-                    <option value="25"></option>
-                    <option value="50"></option>
-                    <option value="75"></option>
-                    <option value="100"></option>
-                </datalist>
-            </div>
+            ) : null}
             <div id="map" className={styles.map}></div>
-        </>
+        </div>
     );
 };
