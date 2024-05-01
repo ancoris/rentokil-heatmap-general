@@ -1,5 +1,5 @@
 div.info {
-    height: 46px;
+    margin-block: 16px;
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
