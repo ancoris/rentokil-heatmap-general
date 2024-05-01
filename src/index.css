@@ -29,6 +29,11 @@ body {
     margin: 0;
     place-items: center;
     min-width: 320px;
+
+    div[data-lastpass-icon-root],
+    div[data-lastpass-root] {
+        display: none;
+    }
 }
 
 h1 {

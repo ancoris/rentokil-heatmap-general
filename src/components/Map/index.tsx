@@ -230,7 +230,7 @@ export const Map = ({
         localDatasetLayer.style = applyStyle;
 
         const localHeatmapLayer = new HeatmapLayer({
-            data: getHeatMapData(0),
+            data: getHeatMapData(90),
         });
         localHeatmapLayer.set("radius", DEFAULT_HEATMAP_RADIUS);
         localHeatmapLayer.setMap(map);
