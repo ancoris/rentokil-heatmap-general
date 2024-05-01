@@ -162,7 +162,7 @@ export const Map = ({
         }
     }
 
-    function createCenterControl(map: google.maps.Map) {
+    function createCenterControl() {
         const controlInput = document.createElement("input");
 
         // Set CSS for the control.
@@ -184,11 +184,6 @@ export const Map = ({
         controlInput.setAttribute("data-lpignore", "true");
         controlInput.autocomplete = "off";
         controlInput.placeholder = "Search by location or zip code...";
-
-        // Setup the click event listeners: simply set the map to Chicago.
-        controlInput.addEventListener("click", () => {
-            map.setCenter(START_POSITION);
-        });
 
         return controlInput;
     }
@@ -286,7 +281,7 @@ export const Map = ({
         // Create the DIV to hold the control.
         const centerControlDiv = document.createElement("div");
         // Create the control.
-        const searchControl = createCenterControl(map);
+        const searchControl = createCenterControl();
         // Append the control to the DIV.
         centerControlDiv.appendChild(searchControl);
 

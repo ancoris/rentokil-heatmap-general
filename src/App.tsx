@@ -1,12 +1,12 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import "./App.css";
-import styles from "./App.module.css";
 import { ID_ATTRIBUTE_NAME, Map } from "./components/Map";
 import geoJson from "./assets/export.geojson";
 import { PrimaryNavigation } from "./components/PrimaryNavigation";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import Sidebar from "./components/Sidebar/Sidebar";
+import { SiteInfo } from "./components/SiteInfo/SiteInfo";
 
 const SQUARE_METRES_TO_SQUARE_FEET_FACTOR = 10.7639;
 
@@ -118,6 +118,7 @@ function App() {
                         {lastClickedFeatureIds?.length > 0
                             ? `Area: ${displayArea} square foot.`
                             : "Please select a bulding to see its area."}
+                        <SiteInfo />
                     </div>
                 }
                 showSidebar={showSidebar}
