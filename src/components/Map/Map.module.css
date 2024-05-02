@@ -35,5 +35,8 @@ div.mapWrapper {
             box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
             min-width: 36px;
         }
+        button.toggleHeatMap:hover {
+            background: rgb(245, 245, 245) padding-box;
+        }
     }
 }

@@ -1,18 +1,20 @@
-import { type Dispatch, type SetStateAction } from "react";
-import { PolygonArea } from "../PolygonArea";
+import { useEffect, useState } from "react";
+import { GeoJsonArea } from "../GeoJsonArea";
 import { PolygonEditor } from "../PolygonEditor";
 import styles from "./Sidebar.module.css";
 import { SiteInfo } from "../SiteInfo/SiteInfo";
 
 const Sidebar = ({
     lastClickedFeatureIds,
-    showSidebar,
-    setShow,
 }: {
     lastClickedFeatureIds: string[];
-    showSidebar: boolean;
-    setShow: Dispatch<SetStateAction<boolean>>;
 }) => {
+    const [showSidebar, setShowSidebar] = useState(false);
+
+    useEffect(() => {
+        setShowSidebar(lastClickedFeatureIds?.length > 0);
+    }, [lastClickedFeatureIds]);
+
     return (
         <div className={styles.outer}>
             <div
@@ -25,7 +27,7 @@ const Sidebar = ({
                         <button
                             className={styles.hideIcon}
                             onClick={() => {
-                                setShow(false);
+                                setShowSidebar(false);
                             }}
                         >
                             X
@@ -33,7 +35,12 @@ const Sidebar = ({
                     </div>
                     <div className={styles.content}>
                         <PolygonEditor {...{ lastClickedFeatureIds }} />
-                        <PolygonArea {...{ lastClickedFeatureIds, setShow }} />
+                        <GeoJsonArea
+                            {...{
+                                featureIds: lastClickedFeatureIds,
+                                prefix: "Original",
+                            }}
+                        />
                         <SiteInfo />
                     </div>
                 </div>

@@ -10,8 +10,6 @@ function App() {
     const [lastClickedFeatureIds, setLastClickedFeatureIds] = useState<
         string[]
     >([]);
-    const [showSidebar, setShowSidebar] = useState(false);
-
     const app = initializeApp({
         apiKey: "AIzaSyBWjMNpB8OfCyVhcARQUMBh9bDzrcxBOpc",
         authDomain: "rentokil-map-area-mini-hack.firebaseapp.com",
@@ -26,11 +24,7 @@ function App() {
     return (
         <>
             <PrimaryNavigation />
-            <Sidebar
-                lastClickedFeatureIds={lastClickedFeatureIds}
-                showSidebar={showSidebar}
-                setShow={setShowSidebar}
-            />
+            <Sidebar {...{ lastClickedFeatureIds }} />
             <Map {...{ lastClickedFeatureIds, setLastClickedFeatureIds }} />
         </>
     );

@@ -1,8 +1,23 @@
-import { useEffect, useState, type FunctionComponent } from "react";
-import { ID_ATTRIBUTE_NAME } from "../Map";
+import {
+    type ReactNode,
+    useEffect,
+    useState,
+    type FunctionComponent,
+} from "react";
+import {
+    ID_ATTRIBUTE_NAME,
+    featureIdIsRentokilCustomer,
+    getFeatureById,
+} from "../geoJsonUtils";
 import geoJson from "../../assets/export.geojson";
 import styles from "./PolygonEditor.module.css";
-import { toLatLngLiteral } from "../mapUtils";
+import {
+    STYLE_CLICKED,
+    STYLE_CUSTOMER,
+    STYLE_NON_CUSTOMER,
+    toLatLng,
+} from "../mapUtils";
+import { PolygonArea } from "../PolygonArea";
 
 type PolygonEditorProps = {
     lastClickedFeatureIds: string[];
@@ -12,28 +27,19 @@ export const PolygonEditor: FunctionComponent<PolygonEditorProps> = ({
     lastClickedFeatureIds,
 }) => {
     const [toEdit, setToEdit] = useState<unknown[]>([]);
+    const [isDirty, setIsDirty] = useState<boolean>(false);
+    const [isZoomChanged, setIsZoomChanged] = useState<boolean>(false);
+    const [polygonAreas, setPolygonAreas] = useState<ReactNode[]>([]);
 
     useEffect(() => {
         if (geoJson) {
-            setToEdit(
-                lastClickedFeatureIds.map((clickedId) => {
-                    const foundFeature = geoJson.features.find(
-                        (feature) =>
-                            feature.properties[ID_ATTRIBUTE_NAME] === clickedId,
-                    );
-                    if (
-                        foundFeature &&
-                        foundFeature.geometry.type === "Polygon"
-                    ) {
-                        return foundFeature;
-                    }
-                }),
-            );
+            setToEdit(lastClickedFeatureIds.map(getFeatureById));
         }
     }, [lastClickedFeatureIds]);
 
     useEffect(() => {
-        toEdit.forEach((feature) => {
+        setPolygonAreas(Array(toEdit.length).fill(null));
+        toEdit.forEach((feature, index) => {
             const featureId = feature.properties[ID_ATTRIBUTE_NAME] as string;
             const miniMapContainer = document.querySelector<HTMLDivElement>(
                 `div.${styles.miniMap}[data-featureid="${featureId}"]`,
@@ -45,19 +51,18 @@ export const PolygonEditor: FunctionComponent<PolygonEditorProps> = ({
                 );
                 return;
             }
+            const editableStyle = {
+                ...(featureIdIsRentokilCustomer(featureId)
+                    ? STYLE_CUSTOMER
+                    : STYLE_NON_CUSTOMER),
+                ...STYLE_CLICKED,
+            };
             const featureToEdit = new google.maps.Polygon({
-                paths: feature.geometry.coordinates[0].map(toLatLngLiteral),
-                strokeColor: "#FF0000",
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: "#FF0000",
-                fillOpacity: 0.35,
+                paths: feature.geometry.coordinates.map((coord) =>
+                    coord.map(toLatLng),
+                ),
                 editable: true,
-            });
-
-            const polyBounds = new google.maps.LatLngBounds();
-            featureToEdit.getPath().forEach((vector) => {
-                polyBounds.extend(vector);
+                ...editableStyle,
             });
 
             const miniMap = new google.maps.Map(miniMapContainer, {
@@ -73,20 +78,69 @@ export const PolygonEditor: FunctionComponent<PolygonEditorProps> = ({
                 clickableIcons: false,
                 rotateControl: true,
             });
-            miniMap.fitBounds(polyBounds);
-
             featureToEdit.setMap(miniMap);
+
+            // todo: not working
+            // miniMap.addListener("zoom_changed", () => {
+            //     console.log("zoom_changed", setIsZoomChanged, isZoomChanged);
+            //     setIsZoomChanged(true);
+            // });
+            ["insert_at", "remove_at", "set_at"].forEach((eventName) => {
+                featureToEdit.getPath().addListener(eventName, () => {
+                    setIsDirty(true);
+                    measureAdjustedArea(index, featureToEdit, miniMap);
+                });
+            });
+            measureAdjustedArea(index, featureToEdit, miniMap);
         });
-    }, [toEdit]);
+    }, [isZoomChanged, toEdit, setPolygonAreas, setIsDirty, setIsZoomChanged]);
+
+    const measureAdjustedArea = (
+        index: number,
+        featureToEdit: google.maps.Polygon,
+        miniMap: google.maps.Map,
+    ): void => {
+        const polyBounds = new google.maps.LatLngBounds();
+        featureToEdit.getPath().forEach((segment) => {
+            polyBounds.extend(segment);
+        });
+        if (!isZoomChanged) {
+            miniMap.fitBounds(polyBounds);
+        }
+        setPolygonAreas((prev) => {
+            const newAreas = [...prev];
+            newAreas[index] = (
+                <PolygonArea
+                    key={featureToEdit.get("featureId")}
+                    {...{
+                        polyPaths: [[featureToEdit.getPath()]],
+                        prefix: "Adjusted",
+                    }}
+                />
+            );
+            return newAreas;
+        });
+    };
+
+    const reset = (): void => {
+        setIsDirty(false);
+        setIsZoomChanged(false);
+        setToEdit(structuredClone(toEdit));
+    };
 
     return (
         <>
             {toEdit.length > 0 ? (
                 <>
-                    <h2>Edit Polygon{toEdit.length === 1 ? "" : "s"}</h2>
-                    <div>
-                        {toEdit.map((feature) => {
-                            const featureId = feature.properties[
+                    <h1 className={styles.heading}>
+                        Edit Polygon{toEdit.length === 1 ? "" : "s"}
+                    </h1>
+                    <button className={styles.reset} onClick={reset}>
+                        Reset Editor{toEdit.length === 1 ? "" : "s"}
+                    </button>
+                    <div className={styles.editorsWrapper}>
+                        {toEdit.map((feature, index) => {
+                            const featureId = feature?.properties[
                                 ID_ATTRIBUTE_NAME
                             ] as string;
                             return (
@@ -95,6 +149,7 @@ export const PolygonEditor: FunctionComponent<PolygonEditorProps> = ({
                                         className={styles.miniMap}
                                         data-featureid={featureId}
                                     ></div>
+                                    {isDirty ? polygonAreas[index] : null}
                                 </div>
                             );
                         })}
