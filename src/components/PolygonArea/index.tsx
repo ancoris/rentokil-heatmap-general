@@ -16,7 +16,7 @@ type PolygonAreaProps = {
     setShow: Dispatch<SetStateAction<boolean>>;
 };
 
-const PolygonArea: FunctionComponent<PolygonAreaProps> = ({
+export const PolygonArea: FunctionComponent<PolygonAreaProps> = ({
     lastClickedFeatureIds,
     setShow,
 }) => {
@@ -101,5 +101,3 @@ const PolygonArea: FunctionComponent<PolygonAreaProps> = ({
         </div>
     );
 };
-
-export default PolygonArea;

@@ -1,5 +1,6 @@
 import { type Dispatch, type SetStateAction } from "react";
-import PolygonArea from "../PolygonArea";
+import { PolygonArea } from "../PolygonArea";
+import { PolygonEditor } from "../PolygonEditor";
 import styles from "./Sidebar.module.css";
 import { SiteInfo } from "../SiteInfo/SiteInfo";
 
@@ -31,6 +32,7 @@ const Sidebar = ({
                         </button>
                     </div>
                     <div className={styles.content}>
+                        <PolygonEditor {...{ lastClickedFeatureIds }} />
                         <PolygonArea {...{ lastClickedFeatureIds, setShow }} />
                         <SiteInfo />
                     </div>
