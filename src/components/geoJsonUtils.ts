@@ -6,7 +6,7 @@ export const featureIdIsRentokilCustomer = (featureId: string): boolean => {
     return Number(featureId.slice(-1)) % 3 === 0;
 };
 
-export const getFeatureById = (featureId: string): unknown => {
+export const getFeatureById = (featureId: string): any => {
     const foundFeature = geoJson.features.find(
         (feature) => feature.properties[ID_ATTRIBUTE_NAME] === featureId,
     );

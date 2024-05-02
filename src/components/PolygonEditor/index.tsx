@@ -9,7 +9,6 @@ import {
     featureIdIsRentokilCustomer,
     getFeatureById,
 } from "../geoJsonUtils";
-import geoJson from "../../assets/export.geojson";
 import styles from "./PolygonEditor.module.css";
 import {
     STYLE_CLICKED,
@@ -26,15 +25,13 @@ type PolygonEditorProps = {
 export const PolygonEditor: FunctionComponent<PolygonEditorProps> = ({
     lastClickedFeatureIds,
 }) => {
-    const [toEdit, setToEdit] = useState<unknown[]>([]);
+    const [toEdit, setToEdit] = useState<any[]>([]);
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [isZoomChanged, setIsZoomChanged] = useState<boolean>(false);
     const [polygonAreas, setPolygonAreas] = useState<ReactNode[]>([]);
 
     useEffect(() => {
-        if (geoJson) {
-            setToEdit(lastClickedFeatureIds.map(getFeatureById));
-        }
+        setToEdit(lastClickedFeatureIds.map(getFeatureById));
     }, [lastClickedFeatureIds]);
 
     useEffect(() => {
@@ -58,7 +55,7 @@ export const PolygonEditor: FunctionComponent<PolygonEditorProps> = ({
                 ...STYLE_CLICKED,
             };
             const featureToEdit = new google.maps.Polygon({
-                paths: feature.geometry.coordinates.map((coord) =>
+                paths: feature.geometry.coordinates.map((coord: number[][]) =>
                     coord.map(toLatLng),
                 ),
                 editable: true,
@@ -140,7 +137,7 @@ export const PolygonEditor: FunctionComponent<PolygonEditorProps> = ({
                     </button>
                     <div className={styles.editorsWrapper}>
                         {toEdit.map((feature, index) => {
-                            const featureId = feature?.properties[
+                            const featureId = feature.properties[
                                 ID_ATTRIBUTE_NAME
                             ] as string;
                             return (
