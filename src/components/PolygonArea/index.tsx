@@ -8,6 +8,7 @@ import {
 } from "react";
 import { ID_ATTRIBUTE_NAME } from "../Map";
 import geoJson from "../../assets/export.geojson";
+import { toLatLngLiteral } from "../mapUtils";
 
 const SQUARE_METRES_TO_SQUARE_FEET_FACTOR = 10.7639;
 
@@ -21,12 +22,6 @@ export const PolygonArea: FunctionComponent<PolygonAreaProps> = ({
     setShow,
 }) => {
     const [displayArea, setDisplayArea] = useState<string>("");
-    const toLatLngLiteral = (point: number[]): { lat: number; lng: number } => {
-        return {
-            lat: point[1],
-            lng: point[0],
-        };
-    };
 
     const getAreaSqMeters = useCallback(
         (
