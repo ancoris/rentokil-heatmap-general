@@ -16,7 +16,7 @@ div.showButton {
 
 div.sidebar {
     color: #fff;
-    width: 300px;
+    width: 408px;
     display: flex;
     position: fixed;
     top: 58px;
@@ -29,7 +29,7 @@ div.sidebar {
 
 div.sidebarActive {
     color: #fff;
-    width: 300px;
+    width: 408px;
     display: flex;
     position: fixed;
     top: 58px;
@@ -48,15 +48,16 @@ div.actions {
     justify-content: flex-end;
 }
 
-button.hideIcon {
-    font-size: 25px;
+button.hideButton {
     width: fit-content;
-    color: black;
     cursor: pointer;
-    border: 1px solid black;
+    border: none;
     background: none;
-    padding: 3px 10px;
-    border-radius: 20px;
+}
+
+img.hideIcon {
+    width: 32px;
+    height: 32px;
 }
 
 div.inner {
@@ -65,8 +66,15 @@ div.inner {
     flex-direction: column;
     height: 100vh;
     overflow-y: scroll;
-    gap: 45px;
     width: 100%;
     padding: 8px;
     background-color: white;
+}
+
+div.areaCalc {
+    font-size: 20px;
+    font-weight: 900;
+    padding: 0px 20px 20px 20px;
+    margin-top: -20px;
+    border-bottom: 1px solid #e0e0e0;
 }

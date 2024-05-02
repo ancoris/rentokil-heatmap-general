@@ -96,8 +96,8 @@ const PolygonArea: FunctionComponent<PolygonAreaProps> = ({
     return (
         <div>
             {lastClickedFeatureIds?.length > 0
-                ? `Area: ${displayArea} square foot.`
-                : "Please select a bulding to see its area."}
+                ? `Area: ${displayArea} square foot`
+                : "Please select a bulding to see its area"}
         </div>
     );
 };

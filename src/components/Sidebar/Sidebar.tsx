@@ -2,6 +2,7 @@ import { type Dispatch, type SetStateAction } from "react";
 import PolygonArea from "../PolygonArea";
 import styles from "./Sidebar.module.css";
 import { SiteInfo } from "../SiteInfo/SiteInfo";
+import CloseIcon from "../../assets/cancel_FILL0_wght400_GRAD0_opsz24.svg";
 
 const Sidebar = ({
     lastClickedFeatureIds,
@@ -12,6 +13,7 @@ const Sidebar = ({
     showSidebar: boolean;
     setShow: Dispatch<SetStateAction<boolean>>;
 }) => {
+    console.log("Sidebar", lastClickedFeatureIds);
     return (
         <div className={styles.outer}>
             <div
@@ -20,17 +22,27 @@ const Sidebar = ({
                 <div className={styles.inner}>
                     <div className={styles.actions}>
                         <button
-                            className={styles.hideIcon}
+                            className={styles.hideButton}
                             onClick={() => {
                                 setShow(false);
                             }}
                         >
-                            X
+                            <img
+                                className={styles.hideIcon}
+                                src={CloseIcon}
+                                alt="close"
+                            />
                         </button>
                     </div>
                     <div className={styles.content}>
-                        <PolygonArea {...{ lastClickedFeatureIds, setShow }} />
-                        <SiteInfo />
+                        <div className={styles.areaCalc}>
+                            <PolygonArea
+                                {...{ lastClickedFeatureIds, setShow }}
+                            />
+                        </div>
+                        <SiteInfo
+                            lastClickedFeatureIds={lastClickedFeatureIds}
+                        />
                     </div>
                 </div>
             </div>
