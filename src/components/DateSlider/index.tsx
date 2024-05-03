@@ -10,11 +10,13 @@ import styles from "./DateSlider.module.css";
 type DateSliderProps = {
     setDatasetLayerVisible: Dispatch<SetStateAction<boolean>>;
     setTimeSliderValue: Dispatch<SetStateAction<number>>;
+    heatmapVisible: boolean;
 };
 
 export const DateSlider: FunctionComponent<DateSliderProps> = ({
     setDatasetLayerVisible,
     setTimeSliderValue,
+    heatmapVisible,
 }) => {
     const [animationIntervalId, setAnimationIntervalId] = useState<
         number | null
@@ -98,7 +100,11 @@ export const DateSlider: FunctionComponent<DateSliderProps> = ({
     };
 
     return (
-        <div className={styles.timeSliderContainer}>
+        <div
+            className={`${styles.timeSliderContainer} ${
+                heatmapVisible ? styles.visible : styles.hidden
+            }`}
+        >
             <div className={styles.timeSliderWrapper}>
                 <input
                     type="range"

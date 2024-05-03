@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import "./App.css";
 import { Map } from "./components/Map";
 import { PrimaryNavigation } from "./components/PrimaryNavigation";
@@ -10,11 +10,6 @@ function App() {
     const [lastClickedFeatureIds, setLastClickedFeatureIds] = useState<
         string[]
     >([]);
-    const [showSidebar, setShowSidebar] = useState(false);
-    const MemoizedMap = useMemo(() => {
-        return <Map {...{ lastClickedFeatureIds, setLastClickedFeatureIds }} />;
-    }, [lastClickedFeatureIds, setLastClickedFeatureIds]);
-
     const app = initializeApp({
         apiKey: "AIzaSyBWjMNpB8OfCyVhcARQUMBh9bDzrcxBOpc",
         authDomain: "rentokil-map-area-mini-hack.firebaseapp.com",
@@ -29,12 +24,8 @@ function App() {
     return (
         <>
             <PrimaryNavigation />
-            <Sidebar
-                lastClickedFeatureIds={lastClickedFeatureIds}
-                showSidebar={showSidebar}
-                setShow={setShowSidebar}
-            />
-            {MemoizedMap}
+            <Sidebar {...{ lastClickedFeatureIds }} />
+            <Map {...{ lastClickedFeatureIds, setLastClickedFeatureIds }} />
         </>
     );
 }

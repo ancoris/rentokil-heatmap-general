@@ -13,5 +13,30 @@ div.mapWrapper {
         height: 100%;
         width: 100%;
         flex-grow: 1;
+
+        button.toggleHeatMap {
+            background: rgb(255, 255, 255) padding-box;
+            display: table-cell;
+            border: 0px;
+            margin: 0px;
+            padding: 0px 17px;
+            text-transform: none;
+            appearance: none;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            overflow: hidden;
+            text-align: center;
+            height: 40px;
+            vertical-align: middle;
+            color: rgb(0, 0, 0);
+            font-family: Roboto, Arial, sans-serif;
+            font-size: 18px;
+            box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+            min-width: 36px;
+        }
+        button.toggleHeatMap:hover {
+            background: rgb(245, 245, 245) padding-box;
+        }
     }
 }

@@ -1,57 +1,32 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import styles from "./Map.module.css";
 import geoJson from "../../assets/export.geojson";
 import { DateSlider } from "../DateSlider";
-
-export const ID_ATTRIBUTE_NAME = "@id";
-
-const STYLE_DEFAULT = {
-    strokeColor: "green",
-    strokeWeight: 2.0,
-    strokeOpacity: 1.0,
-    fillColor: "green",
-    fillOpacity: 0.3,
-};
-
-const RENTOKIL_RED = "#ed1c24";
-const AMBER = "#FFBF00";
-const STYLE_NON_CUSTOMER = {
-    ...STYLE_DEFAULT,
-    strokeColor: AMBER,
-    fillColor: AMBER,
-};
-
-const STYLE_CLICKED = {
-    fillColor: RENTOKIL_RED,
-    fillOpacity: 0.5,
-};
-
-const STYLE_MOUSE_MOVE = {
-    strokeWeight: 4.0,
-    strokeColor: RENTOKIL_RED,
-};
-
-const DEFAULT_HEATMAP_RADIUS = 30;
-const START_POSITION = { lat: 40.735657, lng: -74.172363 }; // Newark, NJ
-
-const psudoRandomNumberGenerator = (seed: number): (() => number) => {
-    // https://stackoverflow.com/a/47593316/498463
-    return function () {
-        seed |= 0;
-        seed = (seed + 0x9e3779b9) | 0;
-        let t = seed ^ (seed >>> 16);
-        t = Math.imul(t, 0x21f0aaad);
-        t = t ^ (t >>> 15);
-        t = Math.imul(t, 0x735a2d97);
-        return ((t = t ^ (t >>> 15)) >>> 0) / 4294967296;
-    };
-};
-
-const getRandomIntInclusive = (min: number, max: number): number => {
-    const minCeiled = Math.ceil(min);
-    const maxFloored = Math.floor(max);
-    return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled); // The maximum is inclusive and the minimum is inclusive
-};
+import {
+    ID_ATTRIBUTE_NAME,
+    featureIdIsRentokilCustomer,
+} from "../geoJsonUtils";
+import {
+    DEFAULT_HEATMAP_RADIUS,
+    START_POSITION,
+    STYLE_CLICKED,
+    STYLE_CUSTOMER,
+    STYLE_MOUSE_MOVE,
+    STYLE_NON_CUSTOMER,
+} from "../mapUtils";
+import {
+    getRandomIntInclusive,
+    psudoRandomNumberGenerator,
+} from "../../numberUtils";
+const { Map: GMap } = (await google.maps.importLibrary(
+    "maps",
+)) as google.maps.MapsLibrary;
+const { Autocomplete } = (await google.maps.importLibrary(
+    "places",
+)) as google.maps.PlacesLibrary;
+const { HeatmapLayer } = (await google.maps.importLibrary(
+    "visualization",
+)) as google.maps.VisualizationLibrary;
 
 const getHeatMapData = (
     rndSeed: number,
@@ -110,6 +85,7 @@ export const Map = ({
         useState<boolean>(true);
     const [heatmap, setHeatmap] =
         useState<google.maps.visualization.HeatmapLayer | null>(null);
+    const [heatmapVisible, setHeatmapVisible] = useState<boolean>(false);
     const [lastInteractedFeatureIds, setLastInteractedFeatureIds] = useState<
         string[]
     >([]);
@@ -188,33 +164,20 @@ export const Map = ({
     };
 
     const initMap = async (): Promise<void> => {
-        // Request needed libraries.
-        const { Map } = (await google.maps.importLibrary(
-            "maps",
-        )) as google.maps.MapsLibrary;
-        const { Autocomplete } = (await google.maps.importLibrary(
-            "places",
-        )) as google.maps.PlacesLibrary;
-        const { HeatmapLayer } = (await google.maps.importLibrary(
-            "visualization",
-        )) as google.maps.VisualizationLibrary;
-
-        map = new Map(
-            document.getElementById("map") as HTMLElement,
-            {
-                zoom: 15,
-                center: START_POSITION,
-                mapId: "dbcf606e93ab5291",
-                mapTypeControl: true,
-                mapTypeControlOptions: {
-                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-                    position: google.maps.ControlPosition.TOP_RIGHT,
-                },
-                streetViewControl: false,
-                clickableIcons: false,
-                rotateControl: true,
-            } as google.maps.MapOptions,
-        );
+        const mapElem = document.getElementById("map") as HTMLDivElement;
+        map = new GMap(mapElem, {
+            zoom: 15,
+            center: START_POSITION,
+            mapId: "dbcf606e93ab5291",
+            mapTypeControl: true,
+            mapTypeControlOptions: {
+                style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                position: google.maps.ControlPosition.TOP_RIGHT,
+            },
+            streetViewControl: false,
+            clickableIcons: false,
+            rotateControl: true,
+        } as google.maps.MapOptions);
 
         // Dataset ID for Newark found by jazim, shown here .
         const datasetId = "21db36cf-e6c2-4367-b1f4-7fb5857053db";
@@ -227,7 +190,6 @@ export const Map = ({
             data: getHeatMapData(90),
         });
         localHeatmapLayer.set("radius", DEFAULT_HEATMAP_RADIUS);
-        localHeatmapLayer.setMap(map);
         setHeatmap(localHeatmapLayer);
 
         localDatasetLayer.addListener("click", handleClick);
@@ -277,7 +239,7 @@ export const Map = ({
             centerControlDiv,
         );
         map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
-            getHeatmapControl(),
+            getHeatmapControl(localHeatmapLayer),
         );
 
         const autocomplete = new Autocomplete(searchControl);
@@ -296,30 +258,23 @@ export const Map = ({
         );
     };
 
-    const getHeatmapControl = (): HTMLDivElement => {
+    const getHeatmapControl = (
+        localHeatmapLayer: google.maps.visualization.HeatmapLayer,
+    ): HTMLDivElement => {
         const heatmapControlDiv = document.createElement("div");
         const heatmapControlButton = document.createElement("button");
         heatmapControlButton.textContent = "Toggle Heatmap";
+        heatmapControlButton.classList.add(styles.toggleHeatMap);
         heatmapControlButton.addEventListener("click", () => {
-            if (heatmap) {
-                const mapVal = heatmap.getMap() ? null : map;
-                heatmap.setMap(mapVal);
+            const hm = heatmap ?? localHeatmapLayer;
+            if (hm) {
+                const mapVal = hm.getMap() ? null : map;
+                hm.setMap(mapVal);
+                setHeatmapVisible(mapVal !== null);
             }
         });
         heatmapControlDiv.appendChild(heatmapControlButton);
         return heatmapControlDiv;
-    };
-
-    const featureIdIsRentokilCustomer = (
-        datasetFeature: google.maps.DatasetFeature,
-    ): boolean => {
-        return (
-            Number(
-                datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME].slice(-1),
-            ) %
-                3 ===
-            0
-        );
     };
 
     const applyStyle: google.maps.FeatureStyleFunction = (params) => {
@@ -327,24 +282,17 @@ export const Map = ({
             return null;
         }
         const datasetFeature = params.feature as google.maps.DatasetFeature;
-        const baseStyle = featureIdIsRentokilCustomer(datasetFeature)
-            ? STYLE_DEFAULT
+        const featureId = datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME];
+        const baseStyle = featureIdIsRentokilCustomer(featureId)
+            ? STYLE_CUSTOMER
             : STYLE_NON_CUSTOMER;
-        if (
-            lastClickedFeatureIds.includes(
-                datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME],
-            )
-        ) {
-            return { ...baseStyle, ...STYLE_CLICKED };
+        let style = baseStyle;
+        if (lastClickedFeatureIds.includes(featureId)) {
+            style = { ...baseStyle, ...STYLE_CLICKED };
+        } else if (lastInteractedFeatureIds.includes(featureId)) {
+            style = { ...baseStyle, ...STYLE_MOUSE_MOVE };
         }
-        if (
-            lastInteractedFeatureIds.includes(
-                datasetFeature.datasetAttributes[ID_ATTRIBUTE_NAME],
-            )
-        ) {
-            return { ...baseStyle, ...STYLE_MOUSE_MOVE };
-        }
-        return baseStyle;
+        return style;
     };
 
     const createAttribution = (map: google.maps.Map, label: string): void => {
@@ -367,20 +315,19 @@ export const Map = ({
         );
     };
 
-    useMemo(() => {
+    useEffect(() => {
         void initMap();
     }, []);
 
     return (
         <div className={styles.mapWrapper}>
-            {datasetLayer ? (
-                <DateSlider
-                    {...{
-                        setDatasetLayerVisible,
-                        setTimeSliderValue,
-                    }}
-                />
-            ) : null}
+            <DateSlider
+                {...{
+                    setDatasetLayerVisible,
+                    setTimeSliderValue,
+                    heatmapVisible,
+                }}
+            />
             <div id="map" className={styles.map}></div>
         </div>
     );

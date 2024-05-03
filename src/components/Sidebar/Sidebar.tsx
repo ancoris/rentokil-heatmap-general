@@ -1,29 +1,34 @@
-import { type Dispatch, type SetStateAction } from "react";
-import PolygonArea from "../PolygonArea";
+import { useEffect, useState } from "react";
+import { GeoJsonArea } from "../GeoJsonArea";
+import { PolygonEditor } from "../PolygonEditor";
 import styles from "./Sidebar.module.css";
 import { SiteInfo } from "../SiteInfo/SiteInfo";
 import CloseIcon from "../../assets/cancel_FILL0_wght400_GRAD0_opsz24.svg";
 
 const Sidebar = ({
     lastClickedFeatureIds,
-    showSidebar,
-    setShow,
 }: {
     lastClickedFeatureIds: string[];
-    showSidebar: boolean;
-    setShow: Dispatch<SetStateAction<boolean>>;
 }) => {
+    const [showSidebar, setShowSidebar] = useState(false);
+
+    useEffect(() => {
+        setShowSidebar(lastClickedFeatureIds?.length > 0);
+    }, [lastClickedFeatureIds]);
+
     return (
         <div className={styles.outer}>
             <div
-                className={showSidebar ? styles.sidebarActive : styles.sidebar}
+                className={`${styles.sidebar} ${
+                    showSidebar ? styles.sidebarActive : ""
+                }`}
             >
                 <div className={styles.inner}>
                     <div className={styles.actions}>
                         <button
                             className={styles.hideButton}
                             onClick={() => {
-                                setShow(false);
+                                setShowSidebar(false);
                             }}
                         >
                             <img
@@ -35,10 +40,14 @@ const Sidebar = ({
                     </div>
                     <div className={styles.content}>
                         <div className={styles.areaCalc}>
-                            <PolygonArea
-                                {...{ lastClickedFeatureIds, setShow }}
-                            />
+                            <PolygonEditor {...{ lastClickedFeatureIds }} />
                         </div>
+                        <GeoJsonArea
+                            {...{
+                                featureIds: lastClickedFeatureIds,
+                                prefix: "Original",
+                            }}
+                        />
                         <SiteInfo
                             lastClickedFeatureIds={lastClickedFeatureIds}
                         />
