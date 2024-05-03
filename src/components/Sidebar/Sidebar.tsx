@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { GeoJsonArea } from "../GeoJsonArea";
 import { PolygonEditor } from "../PolygonEditor";
 import styles from "./Sidebar.module.css";
@@ -6,16 +6,14 @@ import { SiteInfo } from "../SiteInfo/SiteInfo";
 import CloseIcon from "../../assets/cancel_FILL0_wght400_GRAD0_opsz24.svg";
 
 const Sidebar = ({
-    lastClickedFeatureIds,
+    content,
+    showSidebar,
+    setShowSidebar,
 }: {
-    lastClickedFeatureIds: string[];
+    content: ReactNode;
+    showSidebar: boolean;
+    setShowSidebar: (show: boolean) => void;
 }) => {
-    const [showSidebar, setShowSidebar] = useState(false);
-
-    useEffect(() => {
-        setShowSidebar(lastClickedFeatureIds?.length > 0);
-    }, [lastClickedFeatureIds]);
-
     return (
         <div className={styles.outer}>
             <div
@@ -38,20 +36,7 @@ const Sidebar = ({
                             />
                         </button>
                     </div>
-                    <div className={styles.content}>
-                        <div className={styles.areaCalc}>
-                            <PolygonEditor {...{ lastClickedFeatureIds }} />
-                        </div>
-                        <GeoJsonArea
-                            {...{
-                                featureIds: lastClickedFeatureIds,
-                                prefix: "Original",
-                            }}
-                        />
-                        <SiteInfo
-                            lastClickedFeatureIds={lastClickedFeatureIds}
-                        />
-                    </div>
+                    <div className={styles.content}>{content}</div>
                 </div>
             </div>
         </div>

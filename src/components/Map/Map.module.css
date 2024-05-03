@@ -18,7 +18,8 @@ div.mapWrapper {
             background: rgb(255, 255, 255) padding-box;
             display: table-cell;
             border: 0px;
-            margin: 0px;
+            border-radius: 2px;
+            margin: 10px 11px;
             padding: 0px 17px;
             text-transform: none;
             appearance: none;

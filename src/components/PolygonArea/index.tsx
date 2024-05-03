@@ -55,8 +55,8 @@ export const PolygonArea: FunctionComponent<PolygonAreaProps> = ({
     return (
         <div>
             {prefix && displayArea
-                ? `${prefix} area: ${displayArea} square foot.`
-                : "Please select a bulding to see its area."}
+                ? `${prefix} area: ${displayArea} square foot`
+                : "Please select a bulding to see its area"}
         </div>
     );
 };

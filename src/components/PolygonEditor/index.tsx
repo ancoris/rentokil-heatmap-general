@@ -129,12 +129,12 @@ export const PolygonEditor: FunctionComponent<PolygonEditorProps> = ({
         <>
             {toEdit.length > 0 ? (
                 <>
-                    <h1 className={styles.heading}>
-                        Edit Polygon{toEdit.length === 1 ? "" : "s"}
-                    </h1>
-                    <button className={styles.reset} onClick={reset}>
-                        Reset Editor{toEdit.length === 1 ? "" : "s"}
-                    </button>
+                    <div className={styles.actionsWrapper}>
+                        <button className={styles.reset} onClick={reset}>
+                            Reset Editor{toEdit.length === 1 ? "" : "s"}
+                        </button>
+                        <span>Drag points to edit area</span>
+                    </div>
                     <div className={styles.editorsWrapper}>
                         {toEdit.map((feature, index) => {
                             const featureId = feature.properties[

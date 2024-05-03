@@ -64,11 +64,3 @@ div.inner {
     padding: 8px;
     background-color: white;
 }
-
-div.areaCalc {
-    font-size: 20px;
-    font-weight: 900;
-    padding: 0px 20px 20px 20px;
-    margin-top: -20px;
-    border-bottom: 1px solid #e0e0e0;
-}

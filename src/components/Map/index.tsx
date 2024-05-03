@@ -263,7 +263,7 @@ export const Map = ({
     ): HTMLDivElement => {
         const heatmapControlDiv = document.createElement("div");
         const heatmapControlButton = document.createElement("button");
-        heatmapControlButton.textContent = "Toggle Heatmap";
+        heatmapControlButton.textContent = "Migration Map";
         heatmapControlButton.classList.add(styles.toggleHeatMap);
         heatmapControlButton.addEventListener("click", () => {
             const hm = heatmap ?? localHeatmapLayer;

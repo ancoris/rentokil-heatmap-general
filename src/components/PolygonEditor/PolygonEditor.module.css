@@ -29,7 +29,16 @@ button.reset {
 button.reset:hover {
     background: rgb(245, 245, 245) padding-box;
 }
-div.editorsWrapper,
-button.reset {
-    margin-block-end: 16px;
+
+div.actionsWrapper {
+    display: flex;
+    font-size: 16px;
+    margin-block-end: 8px;
+    align-items: end;
+
+    span {
+        flex-grow: 1;
+        font-weight: 300;
+        padding-inline-start: 16px;
+    }
 }
