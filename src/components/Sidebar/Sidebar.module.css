@@ -46,6 +46,7 @@ div.actions {
     width: 100%;
     align-items: center;
     justify-content: flex-end;
+    z-index: 99;
 }
 
 button.hideButton {
@@ -58,6 +59,7 @@ button.hideButton {
 img.hideIcon {
     width: 32px;
     height: 32px;
+    cursor: pointer;
 }
 
 div.inner {

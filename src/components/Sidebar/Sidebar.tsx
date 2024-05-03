@@ -13,7 +13,6 @@ const Sidebar = ({
     showSidebar: boolean;
     setShow: Dispatch<SetStateAction<boolean>>;
 }) => {
-    console.log("Sidebar", lastClickedFeatureIds);
     return (
         <div className={styles.outer}>
             <div

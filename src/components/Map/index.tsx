@@ -232,7 +232,6 @@ export const Map = ({
 
         localDatasetLayer.addListener("click", handleClick);
         localDatasetLayer.addListener("mousemove", handleMouseMove);
-        console.log("localDatasetLayer", localDatasetLayer);
         setDatasetLayer(localDatasetLayer);
 
         // Map event listener.
@@ -324,7 +323,6 @@ export const Map = ({
     };
 
     const applyStyle: google.maps.FeatureStyleFunction = (params) => {
-        console.log("applyStyle", params, datasetLayerVisible);
         if (!datasetLayerVisible) {
             return null;
         }
