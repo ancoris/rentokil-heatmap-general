@@ -72,9 +72,11 @@ const getHeatMapData = (
 export const Map = ({
     lastClickedFeatureIds,
     setLastClickedFeatureIds,
+    handleAtRiskButton,
 }: {
     lastClickedFeatureIds: string[];
     setLastClickedFeatureIds: React.Dispatch<React.SetStateAction<string[]>>;
+    handleAtRiskButton: () => void;
 }) => {
     let map: google.maps.Map;
 
@@ -241,6 +243,9 @@ export const Map = ({
         map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
             getHeatmapControl(localHeatmapLayer),
         );
+        map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
+            getAtRiskControl(),
+        );
 
         const autocomplete = new Autocomplete(searchControl);
 
@@ -275,6 +280,16 @@ export const Map = ({
         });
         heatmapControlDiv.appendChild(heatmapControlButton);
         return heatmapControlDiv;
+    };
+
+    const getAtRiskControl = (): HTMLDivElement => {
+        const atRiskControlDiv = document.createElement("div");
+        const atRiskControlButton = document.createElement("button");
+        atRiskControlButton.textContent = "Buildings at risk";
+        atRiskControlButton.classList.add(styles.toggleHeatMap);
+        atRiskControlButton.addEventListener("click", handleAtRiskButton);
+        atRiskControlDiv.appendChild(atRiskControlButton);
+        return atRiskControlDiv;
     };
 
     const applyStyle: google.maps.FeatureStyleFunction = (params) => {

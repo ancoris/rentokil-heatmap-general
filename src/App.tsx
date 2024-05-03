@@ -8,6 +8,12 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import { PolygonEditor } from "./components/PolygonEditor";
 import { GeoJsonArea } from "./components/GeoJsonArea";
 import { SiteInfo } from "./components/SiteInfo/SiteInfo";
+import { AtRiskList } from "./components/AtRiskList/AtRiskList";
+
+const enum InfoType {
+    siteInfo = "siteInfo",
+    atRiskInfo = "atRiskInfo",
+}
 
 function App() {
     const [lastClickedFeatureIds, setLastClickedFeatureIds] = useState<
@@ -24,10 +30,24 @@ function App() {
     });
     getAnalytics(app);
     const [showSidebar, setShowSidebar] = useState(false);
+    const [activeInfoType, setActiveInfoType] = useState(InfoType.siteInfo);
 
     useEffect(() => {
-        setShowSidebar(lastClickedFeatureIds?.length > 0);
+        if (lastClickedFeatureIds?.length > 0) {
+            setShowSidebar(true);
+            setActiveInfoType(InfoType.siteInfo);
+        } else {
+            if (activeInfoType == InfoType.siteInfo) {
+                setShowSidebar(false);
+            }
+        }
     }, [lastClickedFeatureIds]);
+
+    const handleAtRisk = () => {
+        setShowSidebar(true);
+        setActiveInfoType(InfoType.atRiskInfo);
+        setLastClickedFeatureIds([]);
+    };
 
     const siteDetails = () => {
         return (
@@ -50,11 +70,20 @@ function App() {
         <>
             <PrimaryNavigation />
             <Sidebar
-                content={siteDetails()}
+                content={
+                    activeInfoType == InfoType.siteInfo ? (
+                        siteDetails()
+                    ) : (
+                        <AtRiskList />
+                    )
+                }
                 showSidebar={showSidebar}
                 setShowSidebar={setShowSidebar}
             />
-            <Map {...{ lastClickedFeatureIds, setLastClickedFeatureIds }} />
+            <Map
+                {...{ lastClickedFeatureIds, setLastClickedFeatureIds }}
+                handleAtRiskButton={handleAtRisk}
+            />
         </>
     );
 }
