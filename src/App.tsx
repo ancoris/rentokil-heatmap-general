@@ -77,8 +77,6 @@ function App() {
         map?.setZoom(19);
     };
 
-    console.log("lastClickedFeatureIds", lastClickedFeatureIds);
-
     return (
         <>
             <PrimaryNavigation />
