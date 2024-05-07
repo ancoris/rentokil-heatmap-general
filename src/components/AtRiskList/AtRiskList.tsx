@@ -36,7 +36,6 @@ export const AtRiskList: FunctionComponent<AtRiskListProps> = ({
         coord: google.maps.LatLng,
     ) {
         google.maps.event.addListener(polygon, "click", function () {
-            console.log("Here");
             handleClick(featureId, coord);
         });
     };
@@ -91,13 +90,9 @@ export const AtRiskList: FunctionComponent<AtRiskListProps> = ({
                 fullscreenControl: false,
                 clickableIcons: false,
                 rotateControl: true,
+                tilt: 0,
             });
             featureToEdit.setMap(miniMap);
-
-            console.log(
-                "feature.geometry.coordinates",
-                toLatLng(feature.geometry.coordinates[0][0]),
-            );
 
             addListenersOnPolygon(
                 featureToEdit,

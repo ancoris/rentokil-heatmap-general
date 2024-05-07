@@ -74,6 +74,7 @@ export const PolygonEditor: FunctionComponent<PolygonEditorProps> = ({
                 fullscreenControl: false,
                 clickableIcons: false,
                 rotateControl: true,
+                tilt: 0,
             });
             featureToEdit.setMap(miniMap);
 
