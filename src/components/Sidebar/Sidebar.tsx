@@ -1,8 +1,5 @@
-import { ReactNode, useEffect, useState } from "react";
-import { GeoJsonArea } from "../GeoJsonArea";
-import { PolygonEditor } from "../PolygonEditor";
+import { ReactNode } from "react";
 import styles from "./Sidebar.module.css";
-import { SiteInfo } from "../SiteInfo/SiteInfo";
 import CloseIcon from "../../assets/cancel_FILL0_wght400_GRAD0_opsz24.svg";
 
 const Sidebar = ({

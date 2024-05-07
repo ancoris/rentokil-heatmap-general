@@ -73,10 +73,12 @@ export const Map = ({
     lastClickedFeatureIds,
     setLastClickedFeatureIds,
     handleAtRiskButton,
+    setMap,
 }: {
     lastClickedFeatureIds: string[];
     setLastClickedFeatureIds: React.Dispatch<React.SetStateAction<string[]>>;
     handleAtRiskButton: () => void;
+    setMap: React.Dispatch<React.SetStateAction<google.maps.Map | null>>;
 }) => {
     let map: google.maps.Map;
 
@@ -261,6 +263,10 @@ export const Map = ({
             map,
             "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
         );
+
+        if (setMap) {
+            setMap(map);
+        }
     };
 
     const getHeatmapControl = (

@@ -20,9 +20,26 @@ const atRisk = [
     "way/447663394",
 ];
 
-export const AtRiskList: FunctionComponent = () => {
+type AtRiskListProps = {
+    handleClick: (featureId: string, coord: google.maps.LatLng) => void;
+};
+
+export const AtRiskList: FunctionComponent<AtRiskListProps> = ({
+    handleClick,
+}) => {
     const [toEdit, setToEdit] = useState<any[]>([]);
     const [isZoomChanged, setIsZoomChanged] = useState<boolean>(false);
+
+    const addListenersOnPolygon = function (
+        polygon: google.maps.Polygon,
+        featureId: string,
+        coord: google.maps.LatLng,
+    ) {
+        google.maps.event.addListener(polygon, "click", function () {
+            console.log("Here");
+            handleClick(featureId, coord);
+        });
+    };
 
     useEffect(() => {
         const newFeatures: any[] = [];
@@ -76,6 +93,17 @@ export const AtRiskList: FunctionComponent = () => {
                 rotateControl: true,
             });
             featureToEdit.setMap(miniMap);
+
+            console.log(
+                "feature.geometry.coordinates",
+                toLatLng(feature.geometry.coordinates[0][0]),
+            );
+
+            addListenersOnPolygon(
+                featureToEdit,
+                featureId,
+                toLatLng(feature.geometry.coordinates[0][0]),
+            );
 
             measureAdjustedArea(featureToEdit, miniMap);
         });

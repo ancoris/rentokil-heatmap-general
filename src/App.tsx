@@ -19,6 +19,8 @@ function App() {
     const [lastClickedFeatureIds, setLastClickedFeatureIds] = useState<
         string[]
     >([]);
+    const [map, setMap] = useState<google.maps.Map | null>(null);
+
     const app = initializeApp({
         apiKey: "AIzaSyBWjMNpB8OfCyVhcARQUMBh9bDzrcxBOpc",
         authDomain: "rentokil-map-area-mini-hack.firebaseapp.com",
@@ -66,6 +68,17 @@ function App() {
         );
     };
 
+    const handleAtRiskBuildingClick = (
+        featureId: string,
+        coord: google.maps.LatLng,
+    ) => {
+        setLastClickedFeatureIds([featureId]);
+        map?.panTo(coord);
+        map?.setZoom(19);
+    };
+
+    console.log("lastClickedFeatureIds", lastClickedFeatureIds);
+
     return (
         <>
             <PrimaryNavigation />
@@ -74,7 +87,7 @@ function App() {
                     activeInfoType == InfoType.siteInfo ? (
                         siteDetails()
                     ) : (
-                        <AtRiskList />
+                        <AtRiskList handleClick={handleAtRiskBuildingClick} />
                     )
                 }
                 showSidebar={showSidebar}
@@ -83,6 +96,7 @@ function App() {
             <Map
                 {...{ lastClickedFeatureIds, setLastClickedFeatureIds }}
                 handleAtRiskButton={handleAtRisk}
+                setMap={setMap}
             />
         </>
     );
