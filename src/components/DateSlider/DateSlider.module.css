@@ -67,6 +67,10 @@ div.timeSliderContainer {
             }
         }
 
+        .date {
+            color: var(--text-primary)
+        }
+
         .labels {
             position: absolute;
             bottom: 0;
@@ -74,6 +78,7 @@ div.timeSliderContainer {
         }
 
         .labels span {
+            color: var(--text-primary);
             position: absolute;
             left: calc(
                 var(--i) * (var(--slider-width) - (2 * var(--label-margins))) /

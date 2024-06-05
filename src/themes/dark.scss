@@ -1,0 +1,33 @@
+@import "./colours";
+
+html[data-theme="dark"] {
+    --background-default: #{$neutral-900};
+
+    --primary-main: #{$blue-2};
+    --primary-light: #{$blue-3};
+    --primary-dark: #{$blue-3};
+    --primary-contrast: #{$white-1};
+
+    --text-primary: #e0e0e0;
+    --text-secondary: #{$neutral-400};
+    --text-disabled: #{$neutral-600};
+    --text-contrast: #f8f8f8;
+
+    --warning-main: #{$orange-2};
+    --warning-light: #994d00;
+    --warning-dark: #{$orange-3};
+    --warning-contrast: #{$white-2};
+
+    --grey-50: #{$neutral-900};
+    --grey-100: #{$neutral-800};
+    --grey-200: #{$neutral-700};
+    --grey-300: #{$neutral-600};
+    --grey-400: #{$neutral-500};
+    --grey-500: #{$neutral-400};
+    --grey-600: #{$neutral-300};
+    --grey-700: #{$neutral-200};
+    --grey-800: #{$neutral-100};
+    --grey-900: #{$neutral-50};
+
+    --typography-font-weight-light: 700;
+}

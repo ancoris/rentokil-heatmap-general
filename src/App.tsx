@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import "./App.css";
+import styles from "./App.module.scss";
 import { Map } from "./components/Map";
-import { PrimaryNavigation } from "./components/PrimaryNavigation";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -9,6 +9,13 @@ import { PolygonEditor } from "./components/PolygonEditor";
 import { GeoJsonArea } from "./components/GeoJsonArea";
 import { SiteInfo } from "./components/SiteInfo/SiteInfo";
 import { AtRiskList } from "./components/AtRiskList/AtRiskList";
+import { Header } from "./components/Header/Header";
+import { Avatar } from "./components/Avatar/Avatar";
+import { ListItem } from "./components/ListItem/ListItem";
+import { ThemeContext } from "./context/ThemeContext";
+import ThemeType from "./context/ThemeTypes";
+import Menu from "./assets/menu.svg";
+import Logo from "../src/assets/ancoris-logo.svg" assert { type: "png" };
 
 const enum InfoType {
     siteInfo = "siteInfo",
@@ -20,6 +27,7 @@ function App() {
         string[]
     >([]);
     const [map, setMap] = useState<google.maps.Map | null>(null);
+    const { setTheme } = useContext(ThemeContext);
 
     const app = initializeApp({
         apiKey: "AIzaSyBWjMNpB8OfCyVhcARQUMBh9bDzrcxBOpc",
@@ -54,7 +62,7 @@ function App() {
     const siteDetails = () => {
         return (
             <>
-                <div className="areaCalc">
+                <div className={styles.areaCalc}>
                     <PolygonEditor {...{ lastClickedFeatureIds }} />
                     <GeoJsonArea
                         {...{
@@ -68,6 +76,25 @@ function App() {
         );
     };
 
+    const options = [
+        <ListItem
+            key="light"
+            label="Light theme"
+            onClick={() => {
+                setTheme(ThemeType.Light);
+                console.log(ThemeType.Light);
+            }}
+        />,
+        <ListItem
+            key="dark"
+            label="Dark theme"
+            onClick={() => {
+                setTheme(ThemeType.Dark);
+                console.log(ThemeType.Dark);
+            }}
+        />,
+    ];
+
     const handleAtRiskBuildingClick = (
         featureId: string,
         coord: google.maps.LatLng,
@@ -79,7 +106,18 @@ function App() {
 
     return (
         <>
-            <PrimaryNavigation />
+            <div className={styles.top}>
+                <Header
+                    logo={
+                        <img
+                        src={Logo}
+                        alt="Ancoris Logo"
+                    />
+                    }
+                    title="Rentokil Heatmap"
+                    avatar={<Avatar image={Menu} options={options} />}
+                />
+            </div>
             <Sidebar
                 content={
                     activeInfoType == InfoType.siteInfo ? (

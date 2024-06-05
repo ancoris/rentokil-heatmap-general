@@ -1,0 +1,37 @@
+@import "../../themes/mixins";
+
+@mixin center-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+}
+
+.listItemOuter {
+    background: none;
+    border: none;
+    @include typography-body1();
+    @include center-left();
+    color: var(--text-primary);
+    width: 100%;
+    cursor: pointer;
+}
+
+.listItemContent {
+    @include center-left();
+    column-gap: var(--space-x1);
+    margin: var(--space-x1) var(--space-x2);
+}
+
+.listItemOuter:hover {
+    background: var(--primary-dark);
+    color: var(--text-contrast);
+}
+
+.listItemIconContainer {
+    @include center-left();
+}
+
+.listItemLabelContainer {
+    @include center-left();
+}

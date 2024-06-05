@@ -6,15 +6,3 @@
     flex-direction: column;
     overflow: hidden;
 }
-
-div.wrapper {
-    height: 100%;
-}
-
-div.areaCalc {
-    font-size: 18px;
-    font-weight: 900;
-    padding: 0px 20px 20px 20px;
-    margin-top: -20px;
-    border-bottom: 1px solid #e0e0e0;
-}

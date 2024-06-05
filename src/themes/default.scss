@@ -1,0 +1,76 @@
+@import "../themes/colours";
+
+/* Default Theme */
+html {
+    // Breakpoints
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 600;
+    --breakpoint-md: 900;
+    --breakpoint-lg: 1200;
+    --breakpoint-xl: 1536;
+
+    // Palette
+    --background-paper: #{$white-2};
+    --background-default: #{$white-1};
+
+    --primary-main: #{$blue-2};
+    --primary-light: #{$blue-1};
+    --primary-dark: #{$blue-3};
+    --primary-contrast: #{$white-1};
+
+    --secondary-main: #{$purple-2};
+    --secondary-light: #{$purple-1};
+    --secondary-dark: #{$purple-3};
+    --secondary-contrast: #{$white-1};
+
+    --text-primary: #{$neutral-800};
+    --text-secondary: #{$neutral-600};
+    --text-disabled: #{$neutral-300};
+    --text-contrast: #{$white-2};
+
+    --divider: rgba(black, 0.12);
+
+    --error-main: #{$red-2};
+    --error-light: #{$red-1};
+    --error-dark: #{$red-3};
+    --error-contrast: #{$white-2};
+
+    --warning-main: #{$orange-2};
+    --warning-light: #{$orange-1};
+    --warning-dark: #{$orange-3};
+    --warning-contrast: #{$white-2};
+
+    --success-main: #{$green-2};
+    --success-light: #{$green-1};
+    --success-dark: #{$green-3};
+    --success-contrast: #{$white-2};
+
+    --grey-50: #{$neutral-50};
+    --grey-100: #{$neutral-100};
+    --grey-200: #{$neutral-200};
+    --grey-300: #{$neutral-300};
+    --grey-400: #{$neutral-400};
+    --grey-500: #{$neutral-500};
+    --grey-600: #{$neutral-600};
+    --grey-700: #{$neutral-700};
+    --grey-800: #{$neutral-800};
+    --grey-900: #{$neutral-900};
+
+    --card-background-color: #{$white-1};
+    --card-border-color: #{$grey-2};
+
+    // Spacing
+    --space-half: 4px;
+    --space-x1: 8px;
+    --space-x2: 16px;
+    --space-x4: 32px;
+    --space-x5: 40px;
+    --space-x6: 48px;
+    --space-x8: 64px;
+
+    // Typography
+    --typography-font-family: "Roboto", "Helvetica", "Arial", san-serif;
+    --typography-font-weight-light: 300;
+    --typography-font-weight-normal: 400;
+    --typography-font-weight-bold: 700;
+}

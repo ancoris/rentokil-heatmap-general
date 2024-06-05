@@ -121,7 +121,7 @@ export const DateSlider: FunctionComponent<DateSliderProps> = ({
                 />
                 <output htmlFor="timeSlider">{daysAgo(0)}</output>
                 <label htmlFor="timeSlider">
-                    <strong>Date</strong>
+                    <strong className={styles.date}>Date</strong>
                     <div className={styles.labels} aria-hidden="true">
                         <span style={{ "--i": 0 } as CSSProperties}>
                             {daysAgo(90 - 0)}

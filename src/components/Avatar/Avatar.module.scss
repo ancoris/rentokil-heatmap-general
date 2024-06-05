@@ -1,0 +1,38 @@
+.avatarImage {
+    width: 40px;
+    height: 40px;
+}
+
+.avatarBorder {
+    border: 1px solid var(--grey-300);
+    border-radius: 24px;
+}
+
+.avatarDropdown {
+    position: relative;
+    display: inline-block;
+    line-height: 0px;
+}
+
+.avatarDropdownContent {
+    display: block;
+    position: absolute;
+    width: fit-content;
+    z-index: 5;
+    left: auto;
+    right: 0;
+    margin-right: -10px;
+    padding-block-start: var(--space-x1);
+}
+
+.avatarDropdownContentInner {
+    background: var(--grey-300);
+    width: fit-content;
+    border-radius: 10px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.avatarDropdown:hover .avatarDropdownContent {
+    display: block;
+}

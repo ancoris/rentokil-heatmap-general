@@ -1,0 +1,19 @@
+@import "./themes/default.scss";
+@import "./themes/dark.scss";
+@import "./themes/mixins";
+
+.wrapper {
+    height: 100%;
+}
+
+.areaCalc {
+    font-size: 18px;
+    font-weight: 900;
+    padding: 0px 20px 20px 20px;
+    margin-top: -20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.top {
+    background: var(--background-default);
+}

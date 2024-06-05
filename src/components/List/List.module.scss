@@ -1,0 +1,15 @@
+.listContent {
+    background: none;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.listItemNoSeparator {
+    white-space: nowrap;
+}
+
+.listItemWithSeparator {
+    white-space: nowrap;
+    border-top: 1px solid var(--grey-400);
+}
