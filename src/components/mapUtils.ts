@@ -32,7 +32,7 @@ export const STYLE_MOUSE_MOVE = {
 
 export const DEFAULT_HEATMAP_RADIUS = 30;
 
-export const START_POSITION = { lat: 40.735657, lng: -74.172363 }; // Newark, NJ
+export const START_POSITION = { lat: 51.431590, lng: -0.928840 }; // Newark, NJ
 
 export const toLatLng = (point: number[]): google.maps.LatLng => {
     return new google.maps.LatLng(point[1], point[0]);

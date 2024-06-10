@@ -10,7 +10,7 @@ import {
     STYLE_NON_CUSTOMER,
     toLatLng,
 } from "../mapUtils";
-import geoJson from "../../assets/export.geojson";
+import geoJson from "../../assets/export.geojson.ts";
 
 const atRisk = [
     "way/447948824",

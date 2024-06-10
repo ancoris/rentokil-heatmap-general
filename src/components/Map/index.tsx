@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "./Map.module.css";
-import geoJson from "../../assets/export.geojson";
+import geoJson from "../../assets/export.geojson.ts";
 import { DateSlider } from "../DateSlider";
 import {
     ID_ATTRIBUTE_NAME,
@@ -172,7 +172,7 @@ export const Map = ({
         map = new GMap(mapElem, {
             zoom: 15,
             center: START_POSITION,
-            mapId: "dbcf606e93ab5291",
+            mapId: "b830871d6aa18650",
             mapTypeControl: true,
             mapTypeControlOptions: {
                 style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
@@ -184,7 +184,7 @@ export const Map = ({
         } as google.maps.MapOptions);
 
         // Dataset ID for Newark found by jazim, shown here .
-        const datasetId = "21db36cf-e6c2-4367-b1f4-7fb5857053db";
+        const datasetId = "958490f9-7eee-4f39-9ae0-f4d63f9b169d";
 
         const localDatasetLayer = map.getDatasetFeatureLayer(datasetId);
 

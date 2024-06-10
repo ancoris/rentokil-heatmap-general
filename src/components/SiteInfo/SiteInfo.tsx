@@ -1,7 +1,7 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import styles from "./SiteInfo.module.css";
 import * as GMPX from "@googlemaps/extended-component-library/react";
-import geoJson from "../../assets/export.geojson";
+import geoJson from "../../assets/export.geojson.ts";
 import { ID_ATTRIBUTE_NAME } from "../geoJsonUtils";
 
 const getCenterLatLng = (latlngArray: number[][]): google.maps.LatLng => {

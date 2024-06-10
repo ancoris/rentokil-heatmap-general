@@ -1,4 +1,4 @@
-import geoJson from "../assets/export.geojson";
+import geoJson from "../assets/export.geojson.ts";
 
 export const ID_ATTRIBUTE_NAME = "@id";
 
