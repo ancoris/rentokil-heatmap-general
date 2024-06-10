@@ -9,18 +9,18 @@
     .headerInner {
         margin: auto;
         display: flex;
+        justify-content: space-between;
         flex-direction: row;
         align-items: center;
         padding: var(--space-x1) var(--space-x4);
         column-gap: var(--space-x1);
-        max-width: 960px;
+        max-width: 1200px;
 
         .logoContainer {
             width: 33%;
             min-height: 40px;
             display: flex;
             align-items: center;
-            justify-content: start;
         }
         .titleContainer {
             flex-grow: 1;
