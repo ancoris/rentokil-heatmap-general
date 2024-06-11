@@ -10,14 +10,14 @@ import {
     STYLE_NON_CUSTOMER,
     toLatLng,
 } from "../mapUtils";
-import geoJson from "../../assets/export.geojson.ts";
+import geoJson from "../../assets/export.geojson";
 
 const atRisk = [
-    "way/447948824",
-    "way/447791142",
-    "way/447947672",
-    "way/447669938",
-    "way/447663394",
+    "way/26175261",
+    "way/26175263",
+    "way/33104603",
+    "way/33104605",
+    "way/33104634",
 ];
 
 type AtRiskListProps = {
@@ -122,6 +122,7 @@ export const AtRiskList: FunctionComponent<AtRiskListProps> = ({
             <div className={styles.listWrapper}>
                 <h1 className={styles.heading}>Buildings at risk</h1>
                 {toEdit.map((feature) => {
+                    console.log(feature);
                     const featureId = feature.properties[
                         ID_ATTRIBUTE_NAME
                     ] as string;
