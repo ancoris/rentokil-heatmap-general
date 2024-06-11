@@ -138,7 +138,6 @@ export const PolygonEditor: FunctionComponent<PolygonEditorProps> = ({
                     </div>
                     <div className={styles.editorsWrapper}>
                         {toEdit.map((feature, index) => {
-                            console.log(feature)
                             const featureId = feature.properties[
                                 ID_ATTRIBUTE_NAME
                             ] as string;

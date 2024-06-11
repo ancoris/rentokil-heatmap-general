@@ -30,7 +30,6 @@ const ThemeProvider: FunctionComponent<Props> = ({
 
     const handleThemeChange = (themeType: ThemeType) => {
         document.documentElement.setAttribute("data-theme", themeType);
-        console.log(document.documentElement)
         setThemeType(themeType);
     };
 

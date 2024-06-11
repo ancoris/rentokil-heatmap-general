@@ -172,7 +172,7 @@ export const Map = ({
         map = new GMap(mapElem, {
             zoom: 15,
             center: START_POSITION,
-            mapId: "b830871d6aa18650",
+            mapId: "d399b8c9b0582ecb",
             mapTypeControl: true,
             mapTypeControlOptions: {
                 style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
@@ -184,7 +184,7 @@ export const Map = ({
         } as google.maps.MapOptions);
 
         // Dataset ID for Newark found by jazim, shown here .
-        const datasetId = "958490f9-7eee-4f39-9ae0-f4d63f9b169d";
+        const datasetId = "00e3035a-b516-47cf-972f-e7ed9124520a";
 
         const localDatasetLayer = map.getDatasetFeatureLayer(datasetId);
 

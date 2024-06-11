@@ -14,7 +14,6 @@ export const Avatar: FunctionComponent<AvatarProps> = ({
     const [showMenu, setShowMenu] = useState<boolean>(false);
 
     const handleMenu = () => {
-        console.log("clicked")
         setShowMenu(!showMenu);
     };
 
