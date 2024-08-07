@@ -13,11 +13,21 @@ import {
 import geoJson from "../../assets/export.geojson";
 
 const atRisk = [
-    "way/26175261",
-    "way/26175263",
-    "way/33104603",
-    "way/33104605",
-    "way/33104634",
+    "way/98525966",
+    "way/98531948",
+    "way/98535866",
+    "way/98704375",
+    "way/98820390",
+    "way/157757515",
+    "way/164010931",
+    "way/230252979",
+    "way/342715790",
+    "way/424600551",
+    "way/457644919",
+    "way/559946374",
+    "way/697648756",
+    "way/988977529",
+    "way/1178308379",
 ];
 
 type AtRiskListProps = {
@@ -120,7 +130,7 @@ export const AtRiskList: FunctionComponent<AtRiskListProps> = ({
     return (
         <>
             <div className={styles.listWrapper}>
-                <h1 className={styles.heading}>Buildings at risk</h1>
+                <h1 className={styles.heading}>Locations to review</h1>
                 {toEdit.map((feature) => {
                     console.log(feature);
                     const featureId = feature.properties[

@@ -11,6 +11,19 @@
         "source": "**",
         "destination": "/index.html"
       }
-    ]
+    ],
+    "predeploy": [
+            "npm run build"
+        ]
+  },
+  "emulators": {
+    "hosting": {
+      "port": 5500,
+      "host": "127.0.0.1"
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
   }
 }

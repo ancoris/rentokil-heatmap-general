@@ -10,7 +10,7 @@ import { GeoJsonArea } from "./components/GeoJsonArea";
 import { SiteInfo } from "./components/SiteInfo/SiteInfo";
 import { AtRiskList } from "./components/AtRiskList/AtRiskList";
 import { Header } from "./components/Header/Header";
-import Logo from "../src/assets/ancoris-logo.svg" assert { type: "png" };
+import Logo from "../src/assets/gails_logo.png" assert { type: "png" };
 
 const enum InfoType {
     siteInfo = "siteInfo",
@@ -85,7 +85,7 @@ function App() {
                     logo={
                         <img
                         src={Logo}
-                        alt="Ancoris Logo"
+                        alt="Gail's Bakery Logo"
                     />
                     }
                     title="Heatmap"

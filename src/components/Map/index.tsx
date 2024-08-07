@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Map.module.css";
 import geoJson from "../../assets/export.geojson.ts";
 import { DateSlider } from "../DateSlider";
@@ -28,6 +28,10 @@ const { HeatmapLayer } = (await google.maps.importLibrary(
     "visualization",
 )) as google.maps.VisualizationLibrary;
 
+
+const MAP_ID = "be4e6d1d68d9db48";
+const MAP_DATASET_ID = "fda8cdea-25df-4a77-b099-4c5c3755b587";
+
 const getHeatMapData = (
     rndSeed: number,
 ): Array<{ location: google.maps.LatLng; weight: number }> => {
@@ -38,10 +42,10 @@ const getHeatMapData = (
     for (let i = 0; i < geoJson.features.length; i++) {
         const f = geoJson.features[i];
         // avoid using south east corner of every building for heat map, mix it up to make it more interesting
-        const corner = getRandomIntInclusive(0, 3);
+        const corner = getRandomIntInclusive(0, f.geometry.coordinates[0].length - 1);
         const location =
-            f.geometry.coordinates[0][
-                corner <= f.geometry.coordinates[0].length - 1 ? corner : 0
+            f.geometry.coordinates[getRandomIntInclusive(0, f.geometry.coordinates.length - 1)][
+                corner
             ];
         if (location) {
             locations.push(
@@ -172,7 +176,7 @@ export const Map = ({
         map = new GMap(mapElem, {
             zoom: 15,
             center: START_POSITION,
-            mapId: "d399b8c9b0582ecb",
+            mapId: MAP_ID,
             mapTypeControl: true,
             mapTypeControlOptions: {
                 style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
@@ -183,10 +187,7 @@ export const Map = ({
             rotateControl: true,
         } as google.maps.MapOptions);
 
-        // Dataset ID for Newark found by jazim, shown here .
-        const datasetId = "00e3035a-b516-47cf-972f-e7ed9124520a";
-
-        const localDatasetLayer = map.getDatasetFeatureLayer(datasetId);
+        const localDatasetLayer = map.getDatasetFeatureLayer(MAP_DATASET_ID);
 
         localDatasetLayer.style = applyStyle;
 
@@ -291,7 +292,7 @@ export const Map = ({
     const getAtRiskControl = (): HTMLDivElement => {
         const atRiskControlDiv = document.createElement("div");
         const atRiskControlButton = document.createElement("button");
-        atRiskControlButton.textContent = "Buildings at risk";
+        atRiskControlButton.textContent = "Locations to review";
         atRiskControlButton.classList.add(styles.toggleHeatMap);
         atRiskControlButton.addEventListener("click", handleAtRiskButton);
         atRiskControlDiv.appendChild(atRiskControlButton);

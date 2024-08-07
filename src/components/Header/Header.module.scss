@@ -17,11 +17,18 @@
         max-width: 1200px;
 
         .logoContainer {
-            width: 33%;
+            width: auto;
             min-height: 40px;
+            max-width: 120px;
             display: flex;
             align-items: center;
+
+            img {
+                height: 100%;
+                width: 100%;
+            }
         }
+
         .titleContainer {
             flex-grow: 1;
             min-height: 40px;
@@ -30,6 +37,7 @@
             justify-content: center;
             text-align: center;
         }
+
         .actionsContainer {
             width: 33%;
             min-height: 20px;
@@ -37,6 +45,7 @@
             align-items: center;
             justify-content: end;
             column-gap: var(--space-x2);
+            display: none;
         }
     }
 }
